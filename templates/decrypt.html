@@ -1,0 +1,23 @@
+{% extends 'index.html' %}
+{% block content %}
+
+    {% for document in data %}
+        <p>
+            <h2>Document:</h2>
+            {{document}}
+        </p>
+        <p>
+            <h2>Decrypted:</h2>
+            {% for key, value in document.items() %}
+                <p>
+                    <b>{{ key }}: </b>
+                    <script>
+                        document.write(decrypt( "{{ value }}", "Secret Passphrase" ));
+                    </script>
+                </p>
+            {% endfor %}
+        </p>
+        <hr>
+    {% endfor %}
+
+{% endblock content %}

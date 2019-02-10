@@ -5,14 +5,12 @@ node{
     
     stage('Flake8'){
         bat('''
-            cd 4th_Year_Project
             flake8
         ''')
     }
 
     stage('Run tests'){
         bat('''
-            cd 4th_Year_Project
             python -m unittest discover -v
         ''')
     }

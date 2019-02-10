@@ -8,12 +8,11 @@
     <input type="email" name="email_address" id="email_address" required><br>
 
     <label for="password">Password:</label>
-    <input type="password" name="password" id="password" onchange="fill_encrypted(this, derive_key_from_text(this.value))" required><br>
-    <input type="" name="password_encrypted" id="password_encrypted" readonly required><br>
-    
+    <input type="password" name="password" id="password" class="gen_enc_field" onchange="fill_encrypted(this, derive_key_from_text(this.value))" required><br>
+
     <label for="sec_question">What's 2+2?</label>
     <input type="text" name="sec_question" id="sec_question" required><br>
-    
+
     <input type="submit" value="Login">
 </form>
 

@@ -25,6 +25,12 @@ function encrypt(object) {
 }
 */
 
+// On page.ready()
+$(function () {
+    // Generates encrypted fields on page load.
+    generate_encrypted_fields();
+})
+
 function fill_encrypted(object) {
     $('#' + object.id + '_encrypted')[0].value = encrypt(object.value);
 }

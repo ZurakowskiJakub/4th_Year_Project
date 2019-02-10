@@ -1,27 +1,22 @@
 {% extends 'index.html' %}
 {% block content %}
 
-<label for="history_label">History Label</label>
-<input type="text" name="history_label" id="history_label" onkeyup="fill_encrypted(this)"><br/>
-
-<label for="event_description">Event Description</label>
-<input type="text" name="event_description" id="event_description" onkeyup="fill_encrypted(this)"><br/>
-
-<label for="severity">Severity</label>
-<select name="severity" id="severity" onmouseup="fill_encrypted(this)">
-    <option value="light">Light</option>
-    <option value="medium">Medium</option>
-    <option value="severe">Severe</option>
-</select><br/>
-
-<label for="date">Date</label>
-<input type="date" name="date" id="date" onmouseup="fill_encrypted(this)">
-
 <form action="/save" method="post">
-    <input type="" name="history_label_encrypted" id="history_label_encrypted" readonly><br/>
-    <input type="" name="event_description_encrypted" id="event_description_encrypted" readonly><br/>
-    <input type="" name="severity_encrypted" id="severity_encrypted" readonly><br/>
-    <input type="" name="date_encrypted" id="date_encrypted" readonly>
+    <label for="history_label">History Label</label>
+    <input type="text" name="history_label" id="history_label" onkeyup="fill_encrypted(this)"><br/>
+
+    <label for="event_description">Event Description</label>
+    <input type="text" name="event_description" id="event_description" onkeyup="fill_encrypted(this)"><br/>
+
+    <label for="severity">Severity</label>
+    <select name="severity" id="severity" onmouseup="fill_encrypted(this)">
+        <option value="light">Light</option>
+        <option value="medium">Medium</option>
+        <option value="severe">Severe</option>
+    </select><br/>
+
+    <label for="date">Date</label>
+    <input type="date" name="date" id="date" onmouseup="fill_encrypted(this)">
 
     <input type="submit" value="Save">
 </form>

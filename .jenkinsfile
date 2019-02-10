@@ -1,0 +1,17 @@
+node{
+    stage('Fetch'){
+        git('https://github.com/ZurakowskiJakub/4Y_project.git')
+    }
+    
+    stage('Flake8'){
+        bat('''
+            flake8
+        ''')
+    }
+
+    stage('Run tests'){
+        bat('''
+            python -m unittest discover -v
+        ''')
+    }
+}

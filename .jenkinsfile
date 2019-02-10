@@ -9,7 +9,7 @@ node{
         ''')
     }
 
-    stage('Run tests'){
+    stage('Run pyTests'){
         bat('''
             python -m unittest discover -v
         ''')

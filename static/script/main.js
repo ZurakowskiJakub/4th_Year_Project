@@ -26,10 +26,11 @@ function encrypt(object) {
 */
 
 function fill_encrypted(object) {
-    $('#' + object.id + '_res')[0].value = encrypt(object.value, "Secret Passphrase");
+    $('#' + object.id + '_encrypted')[0].value = encrypt(object.value);
 }
 
-function encrypt(plaintext, passphrase) {
+function encrypt(plaintext, passphrase="Secret Passphrase") {
+    // TODO remove the randomness factor.
     var encrypted = CryptoJS.AES.encrypt(plaintext, passphrase);
 
     return encrypted.toString();
@@ -39,4 +40,11 @@ function decrypt(encrypted_text, passphrase) {
     var decrypted = CryptoJS.AES.decrypt(encrypted_text, passphrase);
 
     return decrypted.toString(CryptoJS.enc.Utf8);
+}
+
+function derive_key_from_text(plaintext) {
+    // var salt = CryptoJS.lib.WordArray.random(128 / 8);
+    var salt = plaintext;
+    var key256Bits = CryptoJS.PBKDF2(plaintext, salt, { keySize: 256 / 32 });
+    return key256Bits.toString();
 }

@@ -1,0 +1,20 @@
+{% extends 'index.html' %}
+{% block content %}
+
+<b style="color: red;">{{error_message}}</b>
+
+<form action="/login" method="post">
+    <label for="email_address">Email Address:</label>
+    <input type="email" name="email_address" id="email_address" required><br>
+
+    <label for="password">Password:</label>
+    <input type="password" name="password" id="password" onchange="fill_encrypted(this, derive_key_from_text(this.value))" required><br>
+    <input type="" name="password_encrypted" id="password_encrypted" readonly required><br>
+    
+    <label for="sec_question">What's 2+2?</label>
+    <input type="text" name="sec_question" id="sec_question" required><br>
+    
+    <input type="submit" value="Login">
+</form>
+
+{% endblock content %}

@@ -12,7 +12,7 @@
                 <p>
                     <b>{{ key }}: </b>
                     <script>
-                        document.write(decrypt( "{{ value }}", "Secret Passphrase" ));
+                        document.write(decrypt( "{{ value }}", getCookie("encryption_key") ));
                     </script>
                 </p>
             {% endfor %}

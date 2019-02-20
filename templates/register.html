@@ -12,8 +12,9 @@
         name="password"
         class="gen_enc_field"
         id="password"
-        onchange="fill_encrypted(this, derive_key_from_text(this.value))"
+        onchange="fill_encrypted(this, true)"
         required><br>
+    <!-- onchange="fill_encrypted(this, derive_key_from_text(this.value))" -->
 
     <label for="sec_question">What's 2+2?</label>
     <input type="text" name="sec_question" id="sec_question" required><br>

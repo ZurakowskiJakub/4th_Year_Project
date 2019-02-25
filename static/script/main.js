@@ -31,17 +31,32 @@ $(function () {
     generate_encrypted_fields();
 })
 
-function fill_encrypted(object, encrypt_with_itself = false) {
-    var password;
-    if (encrypt_with_itself) {
-        password = object.value;
+function fill_encrypted(object) {
+// function fill_encrypted(object, encrypt_with_itself = false) {
+
+    // var password;
+    // if (encrypt_with_itself) {
+    //     password = object.value;
+    // }
+    // else {
+    //     // TODO password that is retrieved.
+    //     // getCookie('encryption_key);
+    //     //// setCookie('encryption_key', this.value);
+    // }
+    $('#' + object.id + '_encrypted')[0].value = encrypt(object.value, object.value);
+}
+
+function fill_password(object, salt = null) {
+    if (salt === null) {
+        var hash = generate_hash(object.value);
+        $('#' + object.id + '_salt')[0].value = hash["salt"];
+        $('#' + object.id + '_hash')[0].value = hash["hash"];
     }
     else {
-        // TODO password that is retrieved.
-        // getCookie('encryption_key);
-        //// setCookie('encryption_key', this.value);
+        var hash = generate_hash(object.value, salt);
+        $('#' + object.id + '_salt')[0].value = hash["salt"];
+        $('#' + object.id + '_hash')[0].value = hash["hash"];
     }
-    $('#' + object.id + '_encrypted')[0].value = encrypt(object.value, object.value);
 }
 
 function encrypt(plaintext, passphrase) {
@@ -55,6 +70,27 @@ function decrypt(encrypted_text, passphrase) {
     var decrypted = CryptoJS.AES.decrypt(encrypted_text, passphrase);
 
     return decrypted.toString(CryptoJS.enc.Utf8);
+}
+
+function generate_hash(plaintext, user_salt=null) {
+    var plaintext = plaintext;
+    var salt;
+    if (user_salt === null) {
+        //Generate salt based on current timestamp
+        var now = new Date().getTime().toString();
+        salt = CryptoJS.SHA256(now).toString();
+    }
+    else {
+        //Use provided salt
+        salt = user_salt;
+    }
+
+    var hash = CryptoJS.SHA256(salt+plaintext).toString();
+
+    return {
+        "salt": salt,
+        "hash": hash
+    };
 }
 
 // function derive_key_from_text(plaintext) {

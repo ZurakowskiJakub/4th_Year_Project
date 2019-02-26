@@ -3,6 +3,8 @@ from flask import request
 from flask import redirect
 from flask import render_template
 from flask import session
+from flask import abort
+from flask import url_for
 
 from flask_pymongo import PyMongo
 
@@ -49,6 +51,9 @@ def register():
     """GET: Returns the page allowing the user to register with the service.\n
     POST: Processes the register form and registers the user with the service.
     """
+    if checkUserAuth():
+        return redirect('/home')
+
     if request.method == 'POST':
         email_address = request.form['email_address']
         password = request.form['password_hash']
@@ -108,6 +113,9 @@ def login():
     """GET: Returns the page allowing the user to login into the service.\n
     POST: Allow the user to enter in password with retrieved salt.
     """
+    if checkUserAuth():
+        return redirect('/home')
+
     if request.method == 'POST':
         email_address = request.form['email_address']
         if getUserAccount(email_address):
@@ -133,8 +141,8 @@ def validate_login():
     mongo = getUserAccount(email_address)[0]
     if mongo['password'] == password:
         # Correct Password
-        session['auth'] = True
-        return redirect('home.html')
+        session['auth'] = email_address
+        return redirect('/home')
     else:
         # Wrong Password
         if not session.get('login_attempts'):
@@ -146,6 +154,21 @@ def validate_login():
             session['login_attempts'] += 1
         return render_template('login_username.html',
                                error_message="Incorrect password, please try again.")
+
+
+@app.route('/home', methods=['GET'])
+def home():
+    if checkUserAuth():
+        return render_template('home.html')
+    else:
+        # Give 401, forbidden access
+        # return redirect('/login', 403)
+        abort(401)
+
+
+@app.errorhandler(401)
+def unauthorisedRequest(error):
+    return render_template('error/401.html'), 401
 
 
 def getUserAccount(email_address: str):

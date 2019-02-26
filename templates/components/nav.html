@@ -2,6 +2,9 @@
     <a href="/">Home</a><!--
 ---><a href="/encrypt">Encrypt + Save</a><!--
 ---><a href="/decrypt">Decrypt + Load</a><!--
----> <a href="/register">Register</a><!--
----> <a href="/login">Login</a>
+---><a href="/register">Register</a><!--
+---><a href="/login">Login</a>
+    {% if session.get('auth') %}
+        <p>Hello {{session.get('auth')}}</p>
+    {% endif %}
 </nav>

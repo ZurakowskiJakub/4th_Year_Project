@@ -1,0 +1,24 @@
+{% extends 'index.html' %}
+{% block content %}
+
+<script>
+    window.setInterval(redirectToLogin, 5000);
+    window.setInterval(updateSeconds, 1000);
+    var seconds = 5;
+
+    function redirectToLogin() {
+        window.location.replace("{{url_for('index')}}");
+    }
+    function updateSeconds() {
+        if(secods >= 0){
+            --seconds;
+        }
+        $('#seconds').html(seconds);
+    }
+</script>
+
+<h1>Error 409 - Conflict</h1>
+<p>There has been a conflict with your query. Most likely the server received more than one result where one was expected.</p>
+<p>You will be taken <a href="{{url_for('index')}}">home</a> in <span id="seconds">5</span> seconds.</p>
+
+{% endblock content %}

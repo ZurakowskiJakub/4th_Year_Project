@@ -78,36 +78,6 @@ def register():
         return render_template('register.html')
 
 
-# @app.route('/login', methods=['GET', 'POST'])
-# def login():
-#     """GET: Returns the page allowing the user to login into the service.\n
-#     POST: Processes the login information and logs the user with the service.
-#     """
-#     if request.method == 'POST':
-#         email_address = request.form['email_address']
-#         password = request.form['password_encrypted']
-#         sec_question = request.form['sec_question']
-#         if sec_question != "4":
-#             err_msg = 'Wrong security question answer!'
-#             return render_template('login.html', error_message=err_msg)
-#         document = mongo.db.Users.find({"email": email_address})
-#         if document is None:
-#             # TODO return 404
-#             return redirect('/')
-#         elif document.count() > 1:
-#             # TODO return 500
-#             return redirect('/')
-#         else:
-#             if document[0]['password'] == password:
-#                 # TODO logged in
-#                 return render_template('temp.html', message="Logged In")
-#             else:
-#                 # TODO wrong password
-#                 return render_template('temp.html', message="Wrong password")
-#     else:
-#         return render_template('login.html')
-
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     """GET: Returns the page allowing the user to login into the service.\n
@@ -171,12 +141,19 @@ def unauthorisedRequest(error):
     return render_template('error/401.html'), 401
 
 
+# Make it 500
+@app.errorhandler(409)
+def conflictingRequest(error):
+    return render_template('error/409.html'), 409
+
+
 def getUserAccount(email_address: str):
     document = mongo.db.Users.find({"email": email_address})
     if document.count() == 0:
         return None
     elif document.count() > 1:
-        raise IOError("More than one record found.")
+        # Make it 500
+        abort(409)
     else:
         return document
 

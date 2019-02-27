@@ -1,0 +1,17 @@
+{% extends 'index.html' %}
+{% block content %}
+
+<b style="color: red;">{{error_message}}</b>
+
+<h1>Setting up your encryption key.</h1>
+<p>This step is very important. Please read carefuly.</p>
+<p>Please write in a word or phrase that will be easily remembered by you. This will be used as your (and only your) encryption key. If you loose or forget this key, all the data stored on this service will be lost and unrecoverable.</p>
+<p>Enter this phrase in the input box below. This phrase / word is NOT stored on the server. You will be asked to write this phrase / word in each time you log in from a different computer.</p>
+
+<input type="text">
+<input type="button" value="Save my Key">
+
+<p>You can also download your phrase as a file, and store it somewhere just in case.</p>
+<p>We recommend storing this file on the cloud, like <a href="http://drive.google.com">Google Drive</a> or <a href="http://dropbox.com">DropBox</a>.</p>
+
+{% endblock content %}

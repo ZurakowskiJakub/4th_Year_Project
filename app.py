@@ -53,10 +53,10 @@ def register():
     POST: Processes the register form and registers the user with the service.
     """
     if checkUserAuth():
-        return redirect('/home')
+        return redirect('/medicalHistory')
 
     if request.method == 'POST':
-        email_address = request.form['email_address']
+        email_address = request.form['email_address'].lower()
         password = request.form['password_hash']
         salt = request.form['password_salt']
         sec_question = request.form['sec_question']
@@ -66,8 +66,10 @@ def register():
                                    error_message=err_msg)
         document = {}
         document['email'] = email_address
-        document['password'] = password
-        document['password_salt'] = salt
+        document['password'] = {
+            'hash': password,
+            'salt': salt
+        }
         try:
             mongo.db.Users.insert_one(document)
         except IOError as error:
@@ -85,18 +87,20 @@ def login():
     POST: Allow the user to enter in password with retrieved salt.
     """
     if checkUserAuth():
-        return redirect('/home')
+        return redirect('/medicalHistory')
 
     if request.method == 'POST':
-        email_address = request.form['email_address']
+        email_address = request.form['email_address'].lower()
         if getUserAccount(email_address):
             session['login_email_address'] = email_address
-            document = getUserAccount(email_address)[0]
-            password_salt = document['password_salt']
+            document = getUserAccount(email_address)
+            password_salt = document['password']['salt']
             return render_template('login_password.html',
                                    password_salt=password_salt,
                                    email_address=email_address)
         else:
+            # TODO make it so it generates that username and treats it
+            # as a wrong pass&user combo
             return render_template('login_username.html',
                                    error_message="Username not found.")
     else:
@@ -107,13 +111,13 @@ def login():
 def validate_login():
     """POST: Validates the password and logs the user in.
     """
-    email_address = request.form['email_address']
+    email_address = session['login_email_address']
     password = request.form['password_hash']
-    mongo = getUserAccount(email_address)[0]
-    if mongo['password'] == password:
+    document = getUserAccount(email_address)
+    if document['password']['hash'] == password:
         # Correct Password
         session['auth'] = email_address
-        return redirect('/home')
+        return redirect('/encryptionKey')
     else:
         # Wrong Password
         if not session.get('login_attempts'):
@@ -125,6 +129,27 @@ def validate_login():
             session['login_attempts'] += 1
         return render_template('login_username.html',
                                error_message="Incorrect password, please try again.")
+
+
+@app.route('/encryptionKey')
+def encryptionKey():
+    if checkUserAuth():
+        document = getUserAccount(session['auth'])
+        if document.get('hasKey'):
+            redirect('/medicalHistory')
+        else:
+            # Doesn't have encryption key
+            try:
+                mongo.db.Users.update({"email": session['auth']}, {
+                    "$set": {
+                        "hasKey": True
+                    }
+                })
+            except IOError:
+                return redirect('/encryptionKey', 500)
+            return render_template('encryptionKey.html')
+    else:
+        abort(401)
 
 
 @app.route('/medicalHistory', methods=['GET'])
@@ -167,7 +192,7 @@ def getUserAccount(email_address: str):
         # Make it 500
         abort(409)
     else:
-        return document
+        return document[0]
 
 
 def checkUserAuth() -> bool:

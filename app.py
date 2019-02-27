@@ -44,7 +44,7 @@ def save():
         wrapper[data_label] = data_item
     mongo.db.Users.insert_one(wrapper)
 
-    return redirect("/decrypt")
+    return redirect(url_for('encrypt'))
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -53,7 +53,7 @@ def register():
     POST: Processes the register form and registers the user with the service.
     """
     if checkUserAuth():
-        return redirect('/medicalHistory')
+        return redirect(url_for('medicalHistory'))
 
     if request.method == 'POST':
         email_address = request.form['email_address'].lower()
@@ -75,7 +75,7 @@ def register():
         except IOError as error:
             return render_template('register.html',
                                    error_message=error)
-        return redirect('/')
+        return redirect(url_for('index'))
 
     else:
         return render_template('register.html')
@@ -87,7 +87,7 @@ def login():
     POST: Allow the user to enter in password with retrieved salt.
     """
     if checkUserAuth():
-        return redirect('/medicalHistory')
+        return redirect(url_for('medicalHistory'))
 
     if request.method == 'POST':
         email_address = request.form['email_address'].lower()
@@ -117,7 +117,7 @@ def validate_login():
     if document['password']['hash'] == password:
         # Correct Password
         session['auth'] = email_address
-        return redirect('/encryptionKey')
+        return redirect(url_for('encryptionKey'))
     else:
         # Wrong Password
         if not session.get('login_attempts'):
@@ -136,7 +136,7 @@ def encryptionKey():
     if checkUserAuth():
         document = getUserAccount(session['auth'])
         if document.get('hasKey'):
-            redirect('/medicalHistory')
+            redirect(url_for('medicalHistory'))
         else:
             # Doesn't have encryption key
             try:
@@ -146,7 +146,7 @@ def encryptionKey():
                     }
                 })
             except IOError:
-                return redirect('/encryptionKey', 500)
+                return redirect(url_for('encryptionKey'), 500)
             return render_template('encryptionKey.html')
     else:
         abort(401)
@@ -167,7 +167,8 @@ def medicalHistory():
 def addMedicalHistory():
     if checkUserAuth():
         mongo = getUserAccount(session['auth'])
-        return render_template('addMedicalHistory.html', encryption_key=mongo[0]['password'])
+        return render_template('addMedicalHistory.html',
+                               encryption_key=mongo[0]['password'])
     else:
         # Give 401, forbidden access
         abort(401)

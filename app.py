@@ -9,9 +9,10 @@ from flask import url_for
 from flask_pymongo import PyMongo
 
 app = Flask(__name__)
-app.config['MONGO_URI'] = "mongodb://localhost:27017/MediSec"
 app.secret_key = "st7x87F+9_!XyYmjr$zm8k9YdrpFDLf*\
                   XZYrDy@YDaaF5pvk6W+!s8LF%v=BXdZw"
+DBNAME = "MediSec"
+app.config['MONGO_URI'] = f"mongodb://localhost:27017/{DBNAME}"
 mongo = PyMongo(app)
 
 
@@ -126,13 +127,24 @@ def validate_login():
                                error_message="Incorrect password, please try again.")
 
 
-@app.route('/home', methods=['GET'])
-def home():
+@app.route('/medicalHistory', methods=['GET'])
+def medicalHistory():
     if checkUserAuth():
-        return render_template('home.html')
+        # TODO show all history
+        return render_template('medicalHistory.html')
     else:
         # Give 401, forbidden access
         # return redirect('/login', 403)
+        abort(401)
+
+
+@app.route('/addMedicalHistory', methods=['GET', 'POST'])
+def addMedicalHistory():
+    if checkUserAuth():
+        mongo = getUserAccount(session['auth'])
+        return render_template('addMedicalHistory.html', encryption_key=mongo[0]['password'])
+    else:
+        # Give 401, forbidden access
         abort(401)
 
 
@@ -141,7 +153,7 @@ def unauthorisedRequest(error):
     return render_template('error/401.html'), 401
 
 
-# Make it 500
+# TODO Make it 500
 @app.errorhandler(409)
 def conflictingRequest(error):
     return render_template('error/409.html'), 409

@@ -31,7 +31,7 @@ $(function () {
     generate_encrypted_fields();
 })
 
-function fill_encrypted(object) {
+function fill_encrypted(object, encryption_key) {
 // function fill_encrypted(object, encrypt_with_itself = false) {
 
     // var password;
@@ -43,7 +43,7 @@ function fill_encrypted(object) {
     //     // getCookie('encryption_key);
     //     //// setCookie('encryption_key', this.value);
     // }
-    $('#' + object.id + '_encrypted')[0].value = encrypt(object.value, object.value);
+    $('#' + object.id + '_encrypted')[0].value = encrypt(object.value, encryption_key);
 }
 
 function fill_password(object, salt = null) {

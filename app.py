@@ -131,12 +131,12 @@ def validate_login():
                                error_message="Incorrect password, please try again.")
 
 
-@app.route('/encryptionKey')
+@app.route('/encryptionKey', methods=['GET'])
 def encryptionKey():
     if checkUserAuth():
         document = getUserAccount(session['auth'])
         if document.get('hasKey'):
-            redirect(url_for('medicalHistory'))
+            return redirect(url_for('medicalHistory'))
         else:
             # Doesn't have encryption key
             try:

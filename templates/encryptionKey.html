@@ -8,8 +8,23 @@
 <p>Please write in a word or phrase that will be easily remembered by you. This will be used as your (and only your) encryption key. If you loose or forget this key, all the data stored on this service will be lost and unrecoverable.</p>
 <p>Enter this phrase in the input box below. This phrase / word is NOT stored on the server. You will be asked to write this phrase / word in each time you log in from a different computer.</p>
 
-<input type="text">
-<input type="button" value="Save my Key">
+<input type="text" id="encryption_key_value">
+<input type="button" value="Save my Key" onclick="download()">
+
+<script>
+    function download() {
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent($('#encryption_key_value')[0].value));
+        element.setAttribute('download', "MediSecEncryptionKey.key");
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+    }
+</script>
 
 <p>You can also download your phrase as a file, and store it somewhere just in case.</p>
 <p>We recommend storing this file on the cloud, like <a href="http://drive.google.com">Google Drive</a> or <a href="http://dropbox.com">DropBox</a>.</p>

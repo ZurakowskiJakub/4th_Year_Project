@@ -5,4 +5,22 @@
 
 <h1>This is the user home page.</h1>
 
+{% if history %}
+    {% for history_item in history %}
+        <div style="border: 1px solid black">
+            {% for name, value in history_item.items() %}
+                <p>
+                    <b>{{name}}:</b>
+                    <script>
+                        document.write(decrypt( "{{ value }}", localStorage.getItem('MediSecEncryptionKey')));
+                    </script>
+                </p>
+            {% endfor %}
+        </div>
+        </br>
+    {% endfor %}
+{% else %}
+    <p>You don't have any medical history saved yet :(</p>
+{% endif %}
+
 {% endblock content %}

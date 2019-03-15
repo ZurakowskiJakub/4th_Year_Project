@@ -4,7 +4,9 @@
 <b style="color: red;">{{error_message}}</b>
 
 <script>
-    var encryption_key = '{{encryption_key}}';
+    if(checkKey()){
+        var encryption_key = localStorage.getItem('MediSecEncryptionKey');
+    }
 </script>
 
 <h1>Add a medical hisotry item</h1>
@@ -18,14 +20,14 @@
     <textarea name="event_description" id="event_description" class="gen_enc_field" onkeyup="fill_encrypted(this, encryption_key)"></textarea></br>
 
     <label for="severity">Severity</label>
-    <select name="severity" id="severity" class="gen_enc_field" onmouseup="fill_encrypted(this, encryption_key)">
+    <select name="severity" id="severity" class="gen_enc_field" onmouseup="fill_encrypted(this, encryption_key)" onkeyup="fill_encrypted(this, encryption_key)" >
         <option value="light">Light</option>
         <option value="medium">Medium</option>
         <option value="severe">Severe</option>
     </select><br/>
 
     <label for="date">Date</label>
-    <input type="date" name="date" id="date" class="gen_enc_field" onmouseup="fill_encrypted(this, encryption_key)">
+    <input type="date" name="date" id="date" class="gen_enc_field" onmouseup="fill_encrypted(this, encryption_key)" onkeyup="fill_encrypted(this, encryption_key)">
 
     <input type="submit" value="Save">
 </form>

@@ -155,8 +155,26 @@ def encryptionKey():
 @app.route('/medicalHistory', methods=['GET'])
 def medicalHistory():
     if checkUserAuth():
-        # TODO show all history
-        return render_template('medicalHistory.html')
+        mongo = getUserAccount(session['auth'])
+        if mongo.get('history'):
+            human_readable = []
+
+            for history_item in mongo['history']:
+                item = {}
+                if history_item.get('event_name'):
+                    item['Event Name'] = history_item.get('event_name')
+                if history_item.get('event_description'):
+                    item['Event Description'] = history_item.get('event_description')
+                if history_item.get('severity'):
+                    item['Severity'] = history_item.get('severity')
+                if history_item.get('date'):
+                    item['Date'] = history_item.get('date')
+                human_readable.append(item)
+
+            return render_template('medicalHistory.html',
+                                   history=human_readable)
+        else:
+            return render_template('medicalHistory.html')
     else:
         # Give 401, forbidden access
         # return redirect('/login', 403)
@@ -166,9 +184,39 @@ def medicalHistory():
 @app.route('/addMedicalHistory', methods=['GET', 'POST'])
 def addMedicalHistory():
     if checkUserAuth():
-        mongo = getUserAccount(session['auth'])
-        return render_template('addMedicalHistory.html',
-                               encryption_key=mongo[0]['password'])
+        if request.method == 'GET':
+            return render_template('addMedicalHistory.html')
+        
+        elif request.method == 'POST':
+            history = {}
+            if request.form['event_name_encrypted']:
+                history['event_name'] = request.form['event_name_encrypted']
+            if request.form['event_description_encrypted']:
+                history['event_description'] = request.form['event_description_encrypted']
+            if request.form['severity_encrypted']:
+                history['severity'] = request.form['severity_encrypted']
+            if request.form['date_encrypted']:
+                history['date'] = request.form['date_encrypted']
+            
+            try:
+                mongo.db.Users.update(
+                    {"email": session['auth']},
+                    {"$push": {
+                        "history": history
+                    }},
+                )
+            except IOError:
+                return redirect(url_for('addMedicalHistory'), 500)
+            
+            return render_template('addMedicalHistory.html',
+                                   info_msg="Item added sucesfully.")
+        
+        else:
+            abort(401)
+
+        # mongo = getUserAccount(session['auth'])
+        # return render_template('addMedicalHistory.html',
+        #                        encryption_key=mongo['password'])
     else:
         # Give 401, forbidden access
         abort(401)

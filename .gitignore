@@ -4,6 +4,7 @@
 
 ### CUSTOM ###
 .vscode
+db_layout.temp.json
 
 ### Flask ###
 instance/*

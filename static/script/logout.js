@@ -6,14 +6,20 @@ function deleteKey(){
 }
 
 $(function () {
+
+    var LOGOUTANIMATIONTIME = 400;
     /* Logout on-click cancel button */
     $("#logoutNavButton").click(function (e) { 
         e.preventDefault();
-        $("#logoutCover").toggle();
+        $("#logoutCover").toggle(LOGOUTANIMATIONTIME / 2, function () {
+            $("#logoutBox").toggle(LOGOUTANIMATIONTIME);
+        });
     });
 
     $("#logoutCancel").click(function (e) { 
         e.preventDefault();
-        $("#logoutCover").toggle();
+        $("#logoutBox").toggle(LOGOUTANIMATIONTIME, function () {
+            $("#logoutCover").toggle(LOGOUTANIMATIONTIME/2);
+        });
     });
 });

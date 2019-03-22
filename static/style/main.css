@@ -46,11 +46,12 @@ footer{
     display: none;
 }
 
-#logoutCover #logout{
+#logoutBox{
     display: inline-block;
     background-color: #ffffff;
     border: 5px solid black;
     position: relative;
     top: 5em;
     padding: 1em;
+    display: none;
 }

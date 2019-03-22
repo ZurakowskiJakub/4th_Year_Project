@@ -213,12 +213,16 @@ def addMedicalHistory():
         
         else:
             abort(401)
-
-        # mongo = getUserAccount(session['auth'])
-        # return render_template('addMedicalHistory.html',
-        #                        encryption_key=mongo['password'])
     else:
-        # Give 401, forbidden access
+        abort(401)
+
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    if checkUserAuth():
+        session.clear()
+        return redirect(url_for('index'))
+    else:
         abort(401)
 
 

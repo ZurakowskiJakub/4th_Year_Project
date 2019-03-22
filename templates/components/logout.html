@@ -1,0 +1,15 @@
+<div id="logoutCover">
+    <div id="logout">
+        <p>
+            Are you sure you wish to logout?
+        </p>
+        <div>
+            <input type="checkbox" id="deleteKey" />
+            <label for="deleteKey">Delete the encryption key from this device?</label>
+        </div>
+        <form action="/logout" method="post" onsubmit="deleteKey()">
+            <input type="submit" value="Logout">
+            <input id="logoutCancel" type="button" value="Cancel">
+        </form>
+    </div>
+</div>

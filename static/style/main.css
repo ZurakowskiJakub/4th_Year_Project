@@ -36,3 +36,21 @@ footer{
     padding: 1em 0em;
     text-align: center;
 }
+
+#logoutCover{
+    position: fixed;
+    background-color: rgba(0, 0, 0, .5);
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    display: none;
+}
+
+#logoutCover #logout{
+    display: inline-block;
+    background-color: #ffffff;
+    border: 5px solid black;
+    position: relative;
+    top: 5em;
+    padding: 1em;
+}

@@ -12,6 +12,7 @@
 
         <!-- Local CSS -->
         <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='style/main.css') }}" />
+        {% block customCSS %}{% endblock customCSS %}
 
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="{{ url_for('static', filename='dist/bootstrap/css/bootstrap.min.css') }}">
@@ -20,7 +21,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
         <!-- Bootstrap JS -->
-        <script src="{{ url_for('static', filename='dist/bootstrap/js/boostrap.bundle.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='dist/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
         <!-- CryptoJS libraries -->
         <script src="{{ url_for('static', filename='dist/CrpytoJS/aes.js') }}"></script>
@@ -31,9 +32,12 @@
         <script src="{{ url_for('static', filename='script/checkKey.js') }}"></script>
         <script src="{{ url_for('static', filename='script/generate_encrypted_fields.js') }}"></script>
         <script src="{{ url_for('static', filename='script/cookies.js') }}"></script>
+        <script src="{{ url_for('static', filename='script/logout.js') }}"></script>
         <script src="{{ url_for('static', filename='script/main.js') }}"></script>
+        {% block customJS %}{% endblock customJS %}
     </head>
     <body>
+        {% include 'components/logout.html' %}
         {% include 'components/nav.html' %}
         <div class="hasMargin">
             {% block content %}

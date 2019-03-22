@@ -5,6 +5,7 @@
     {% if session.get('auth') %}
         ---><a href="/medicalHistory">Medical History</a><!--
         ---><a href="/addMedicalHistory">Add Medical History</a><!--
+        ---><a id="logoutNavButton">Logout</a><!--
         ---><a>Hello {{session.get('auth')}}</a>
     {% endif %}
 <!---->

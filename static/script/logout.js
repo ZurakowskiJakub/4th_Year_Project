@@ -11,7 +11,7 @@ $(function () {
     /* Logout on-click cancel button */
     $("#logoutNavButton").click(function (e) { 
         e.preventDefault();
-        $("#logoutCover").toggle(LOGOUTANIMATIONTIME / 2, function () {
+        $("#logoutCover").toggle(0, function () {
             $("#logoutBox").toggle(LOGOUTANIMATIONTIME);
         });
     });
@@ -19,7 +19,7 @@ $(function () {
     $("#logoutCancel").click(function (e) { 
         e.preventDefault();
         $("#logoutBox").toggle(LOGOUTANIMATIONTIME, function () {
-            $("#logoutCover").toggle(LOGOUTANIMATIONTIME/2);
+            $("#logoutCover").toggle(0);
         });
     });
 });

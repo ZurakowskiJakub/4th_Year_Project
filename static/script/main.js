@@ -110,7 +110,17 @@ function checkPasswordPolicy(password) {
 
 
 function deleteElementAfterTimeout(element, seconds) {
-    setTimeout(function(){
-        element.remove()
+    setTimeout(function () {
+        element.hide(750, function () {
+            element.remove();
+        });
     }, seconds*1000);
+}
+
+
+function createUserMessage(message, seconds=3, type="error") {
+    var msg = $('<p>');
+    msg[0].innerText = message;
+    $("#"+type+"MessageContainer").append(msg);
+    deleteElementAfterTimeout(msg, seconds)
 }

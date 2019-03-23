@@ -63,6 +63,7 @@ def register():
     """GET: Returns the page allowing the user to register with the service.\n
     POST: Processes the register form and registers the user with the service.
     """
+    # IF USER IS AUTHENTICATED, PUSH HIM TO HOME
     if checkUserAuth():
         return redirect(url_for('medicalHistory'))
 
@@ -70,6 +71,11 @@ def register():
         # TAKE IN THE INPUT
         email_address = request.form['email_address'].lower()
         password = request.form['password']
+
+        # CHECK IF EMAIL ALREADY TAKEN
+        if not getUserAccount(email_address):
+            return render_template('register.html',
+                                   error_message="Sorry, that username is already taken.")
 
         # SEND EMAIL VERIFICATION
         # TODO implement email verification
@@ -87,6 +93,7 @@ def register():
             'hash': pass_hash.hexdigest(),
             'salt': salt.hexdigest()
         }
+        document['login_attempts'] = 0
 
         # ATTEMPT TO PERSIST THE DATA
         try:
@@ -262,7 +269,8 @@ def getUserAccount(email_address: str):
         return None
     elif document.count() > 1:
         # Make it 500
-        abort(409)
+        # abort(409)
+        return None
     else:
         return document[0]
 

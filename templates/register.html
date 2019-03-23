@@ -8,10 +8,7 @@
             var plaintext_password = $("#password")[0].value;
 
             if(!checkPasswordPolicy(plaintext_password)){
-                var msg = $('<p>');
-                msg[0].innerText = "Your password isn't strong enough!";
-                $("#errorMessageContainer").append(msg);
-                deleteElementAfterTimeout(msg, 5)
+                createUserMessage("Your password doesn't match the minimum password guidelines.")
                 return false;
             }
 
@@ -45,6 +42,10 @@
                 obj.addClass("borderColorFailure");
             }
         });
+
+        {% if error_message %}
+            createUserMessage("{{error_message}}", 5)
+        {% endif %}
     });
 </script>
 {% endblock customJS %}
@@ -67,8 +68,6 @@
 {% endblock infoMessages %}
 
 {% block content %}
-
-<b style="color: red;">{{error_message}}</b>
 
 <form id="registerForm" action="/register" method="post">
     <label for="email_address">Email Address:</label>

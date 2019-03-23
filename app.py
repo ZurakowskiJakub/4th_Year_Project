@@ -8,11 +8,18 @@ from flask import url_for
 
 from flask_pymongo import PyMongo
 
+import email
+import smtplib
+
 app = Flask(__name__)
-app.secret_key = "st7x87F+9_!XyYmjr$zm8k9YdrpFDLf*\
-                  XZYrDy@YDaaF5pvk6W+!s8LF%v=BXdZw"
-DBNAME = "MediSec"
-app.config['MONGO_URI'] = f"mongodb://localhost:27017/{DBNAME}"
+# app.secret_key = "st7x87F+9_!XyYmjr$zm8k9YdrpFDLf*
+#                   XZYrDy@YDaaF5pvk6W+!s8LF%v=BXdZw"
+
+# DBNAME = "MediSec"
+# app.config['MONGO_URI'] = f"mongodb://localhost:27017/{DBNAME}"
+
+# IMPORTANT, NOT in version control.
+app.config.from_json("config.json")
 mongo = PyMongo(app)
 
 
@@ -64,6 +71,8 @@ def register():
             err_msg = 'Wrong security question answer!'
             return render_template('register.html',
                                    error_message=err_msg)
+        # TODO implement email verification
+        # sendEmailVerificationEmail('Jakub_zzzz@hotmail.com')
         document = {}
         document['email'] = email_address
         document['password'] = {
@@ -257,6 +266,39 @@ def checkUserAuth() -> bool:
     elif not session.get('auth'):
         # User is not Authenticated
         return False
+
+
+def sendEmailVerificationEmail(recipient: str) -> bool:
+    """Sends an email using the smtp connection
+    Returns true if sent, false if failed.
+    """
+    PASSWORD = "jakeisgreat101"
+    FROM = "jakub_zzzz@hotmail.com"
+    TO = recipient
+
+    msg = email.message_from_string(f"""
+    You have sucesfully registered.
+    Please click the link below to verify your email.
+    You won't be able to log-in unless you do this.
+    """)
+    msg['Subject'] = "MediSec"
+    msg['From'] = FROM
+    msg['To'] = TO
+        
+    try:
+        s = smtplib.SMTP("smtp.live.com",587)
+        s.ehlo()
+        s.starttls()
+        s.ehlo()
+        s.login(FROM, PASSWORD)
+
+        s.sendmail(FROM, TO, msg.as_string())
+    except Exception as e:
+        print(e)
+        return False
+    finally:
+        s.quit()
+    return True
 
 
 if __name__ == "__main__":

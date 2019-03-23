@@ -100,3 +100,17 @@ function PBKDF2(salt, password) {
     );
     return digest.toString();
 }
+
+
+function checkPasswordPolicy(password) {
+    var expression = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%&*()]).{8,}/;
+
+    return expression.test(password);
+}
+
+
+function deleteElementAfterTimeout(element, seconds) {
+    setTimeout(function(){
+        element.remove()
+    }, seconds*1000);
+}

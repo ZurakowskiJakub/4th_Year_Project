@@ -40,6 +40,14 @@
         {% include 'components/logout.html' %}
         {% include 'components/nav.html' %}
         <div class="hasMargin">
+            <div id="infoMessageContainer">
+                {% block infoMessages %}
+                {% endblock infoMessages %}
+            </div>
+            <div id="errorMessageContainer">
+                {% block errorMessages %}
+                {% endblock errorMessages %}
+            </div>
             {% block content %}
 
             <h1>MediSec</h1>

@@ -3,13 +3,23 @@
 {% block customJS %}
 <script>
     $(function () {
-        $("#registerForm").submit( function ( e ) {
+        // ON SUBMIT
+        $("#registerForm").submit( function () {
+            var plaintext_password = $("#password")[0].value;
+
+            if(!checkPasswordPolicy(plaintext_password)){
+                var msg = $('<p>');
+                msg[0].innerText = "Your password isn't strong enough!";
+                $("#errorMessageContainer").append(msg);
+                deleteElementAfterTimeout(msg, 5)
+                return false;
+            }
+
             $("#registerForm :input").each( function () {
                 $(this).attr('readonly', true);
             });
 
-            var original_value = $("#password")[0].value;
-            var hashed_value = create_hash(original_value);
+            var hashed_value = create_hash(plaintext_password);
 
             if(hashed_value === null){
                 $("#registerForm :input").each( function () {
@@ -21,9 +31,40 @@
             $("#password")[0].value = hashed_value;
             return true;
         });
+
+        // ON TYPE
+        $("#password").change(function () {
+            var obj = $(this);
+            var pass = obj[0].value;
+            if(checkPasswordPolicy(pass)){
+                obj.removeClass("borderColorFailure");
+                obj.addClass("borderColorSucess");
+            }
+            else{
+                obj.removeClass("borderColorSucess");
+                obj.addClass("borderColorFailure");
+            }
+        });
     });
 </script>
 {% endblock customJS %}
+
+{% block infoMessages %}
+    <p>Please enter a valid email address.</p>
+    <p>
+        Your password needs to contain the following:
+        <ul>
+            <li>Minimum length of 8 characters.</li>
+            <li>A lowercase letter.</li>
+            <li>An UPPERCASE letter.</li>
+            <li>A digit (0-9).</li>
+            <li>One of the following symbols:</li>
+            <ul>
+                <li>!@#$%&*()</li>
+            </ul>
+        </ul>
+    </p>
+{% endblock infoMessages %}
 
 {% block content %}
 

@@ -76,16 +76,16 @@ def register():
         # sendEmailVerificationEmail('Jakub_zzzz@hotmail.com')
 
         # GENERATE SALT AND HASH
-        now = str(datetime.now())
-        salt = hashlib.sha256(bytes(now))
-        pass_hash = hashlib.sha256(bytes(str(salt)+password))
+        now = str( datetime.now() )
+        salt = hashlib.sha256( bytes( now, encoding='utf8' ) )
+        pass_hash = hashlib.sha256( bytes( str( salt ) + password, encoding='utf8' ) )
 
         # CREATE A DICTIONARY WITH DETAILS
         document = {}
         document['email'] = email_address
         document['password'] = {
-            'hash': pass_hash,
-            'salt': salt
+            'hash': pass_hash.hexdigest(),
+            'salt': salt.hexdigest()
         }
 
         # ATTEMPT TO PERSIST THE DATA

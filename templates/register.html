@@ -1,24 +1,43 @@
 {% extends 'index.html' %}
 
+{% block customJS %}
+<script>
+    $(function () {
+        $("#registerForm").submit( function ( e ) {
+            $("#registerForm :input").each( function () {
+                $(this).attr('readonly', true);
+            });
+
+            var original_value = $("#password")[0].value;
+            var hashed_value = create_hash(original_value);
+
+            if(hashed_value === null){
+                $("#registerForm :input").each( function () {
+                    $(this).attr('readonly', false);
+                });
+                return false;
+            }
+
+            $("#password")[0].value = hashed_value;
+            return true;
+        });
+    });
+</script>
+{% endblock customJS %}
+
 {% block content %}
 
 <b style="color: red;">{{error_message}}</b>
 
-<form action="/register" method="post">
+<form id="registerForm" action="/register" method="post">
     <label for="email_address">Email Address:</label>
     <input type="email" name="email_address" id="email_address" required><br>
 
     <label for="password">Password:</label>
     <input type="password"
         name="password"
-        class="gen_pass_field"
         id="password"
-        onchange="fill_password(this)"
         required><br>
-    <!-- onchange="fill_encrypted(this, derive_key_from_text(this.value))" -->
-
-    <label for="sec_question">What's 2+2?</label>
-    <input type="text" name="sec_question" id="sec_question" required><br>
 
     <input type="submit" value="Register">
 </form>

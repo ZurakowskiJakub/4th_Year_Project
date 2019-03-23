@@ -72,6 +72,20 @@ function generate_hash(plaintext, user_salt=null) {
     };
 }
 
+
+function create_hash(plaintext) {
+    var digest = null;
+    
+    try {
+        digest = CryptoJS.SHA256(plaintext).toString();
+    } catch (error) {
+        console.log(error);
+    }
+
+    return digest;
+}
+
+
 function PBKDF2(salt, password) {
     var user_salt = salt;
     var user_password = password;

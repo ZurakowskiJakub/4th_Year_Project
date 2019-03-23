@@ -8,6 +8,10 @@ from flask import url_for
 
 from flask_pymongo import PyMongo
 
+from datetime import datetime
+
+import hashlib
+
 import email
 import smtplib
 
@@ -63,28 +67,34 @@ def register():
         return redirect(url_for('medicalHistory'))
 
     if request.method == 'POST':
+        # TAKE IN THE INPUT
         email_address = request.form['email_address'].lower()
-        password = request.form['password_hash']
-        salt = request.form['password_salt']
-        sec_question = request.form['sec_question']
-        if sec_question != "4":
-            err_msg = 'Wrong security question answer!'
-            return render_template('register.html',
-                                   error_message=err_msg)
+        password = request.form['password']
+
+        # SEND EMAIL VERIFICATION
         # TODO implement email verification
         # sendEmailVerificationEmail('Jakub_zzzz@hotmail.com')
+
+        # GENERATE SALT AND HASH
+        now = str(datetime.now())
+        salt = hashlib.sha256(bytes(now))
+        pass_hash = hashlib.sha256(bytes(str(salt)+password))
+
+        # CREATE A DICTIONARY WITH DETAILS
         document = {}
         document['email'] = email_address
         document['password'] = {
-            'hash': password,
+            'hash': pass_hash,
             'salt': salt
         }
+
+        # ATTEMPT TO PERSIST THE DATA
         try:
             mongo.db.Users.insert_one(document)
-        except IOError as error:
+        except IOError:
             return render_template('register.html',
-                                   error_message=error)
-        return redirect(url_for('index'))
+                                   error_message="There was an issue saving your data. Please try again.")
+        return redirect(url_for('login'))
 
     else:
         return render_template('register.html')

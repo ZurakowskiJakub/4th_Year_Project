@@ -1,12 +1,15 @@
-// Before page.ready()
+/*** RAN AT START-UP ***/
 // checkKey();
 
-// On page.ready()
+
+/*** ON PAGE READY ***/
 $(function () {
     // Generates encrypted fields on page load.
     generate_encrypted_fields();
 })
 
+
+/*** PRIVATE FUNCTIONS ***/
 function fill_encrypted(object, encryption_key) {
 // function fill_encrypted(object, encrypt_with_itself = false) {
 
@@ -69,9 +72,17 @@ function generate_hash(plaintext, user_salt=null) {
     };
 }
 
-// function derive_key_from_text(plaintext) {
-//     // var salt = CryptoJS.lib.WordArray.random(128 / 8);
-//     var salt = plaintext;
-//     var key256Bits = CryptoJS.PBKDF2(plaintext, salt, { keySize: 256 / 32 });
-//     return key256Bits.toString();
-// }
+function PBKDF2(salt, password) {
+    var user_salt = salt;
+    var user_password = password;
+    var iterations = 2500;
+    var digest = CryptoJS.PBKDF2(
+        user_password,
+        user_salt,
+        {
+            keySize: 512 / 32,
+            iterations: iterations
+        }
+    );
+    return digest.toString();
+}

@@ -9,6 +9,7 @@ from flask import url_for
 from flask_pymongo import PyMongo
 
 from datetime import datetime
+from datetime import timedelta
 
 import hashlib
 
@@ -95,6 +96,7 @@ def register():
         }
         document['login_attempts'] = 0
         document['account_locked'] = False
+        document['account_locked_time'] = datetime.utcnow()
 
         # ATTEMPT TO PERSIST THE DATA
         try:
@@ -118,6 +120,9 @@ def login():
         return redirect(url_for('medicalHistory'))
 
     if request.method == 'POST':
+        # GENERAL ERROR MESSAGE USED
+        ERRORMESSAGE = "There was an issue logging you in, please try again."
+        
         # TAKE IN THE INPUT
         email_address = request.form['email_address'].lower()
         password = request.form['password']
@@ -128,32 +133,48 @@ def login():
 
             # CHECK IF ACCOUNT IS LOCKED
             if document['account_locked']:
-                return render_template('login.html',
-                                       error_message="This account has been locked. Try again later.")
+                if document['account_locked_time'] + timedelta(minutes=5) <= datetime.utcnow():
+                    try:
+                        mongo.db.Users.update({"email": email_address}, {
+                            "$set": {
+                                "login_attempts": 1,
+                                "account_locked": False
+                            }
+                        })
+                    except IOError:
+                        return render_template('login.html',
+                                               error_message=ERRORMESSAGE)
+                else:
+                    return render_template('login.html',
+                                           error_message="This account has been locked. Try again later.")
 
             # GENERATE SALT AND HASH
             salt = document['password']['salt']
             pass_hash = hashlib.sha256(bytes((salt + password), encoding='utf8'))
             
-            # GENERAL ERROR MESSAGE USED
-            ERRORMESSAGE = "There was an issue logging you in, please try again."
-            
             # PASSWORDS MATCH
             if pass_hash.hexdigest() == document['password']['hash']:
                 session['auth'] = email_address
+                try:
+                    mongo.db.Users.update({"email": email_address}, {
+                        "$set": {
+                            "login_attempts": 0
+                        }
+                    })
+                except IOError:
+                    return render_template('login.html',
+                                           error_message=ERRORMESSAGE)
                 return redirect(url_for('medicalHistory'))
 
             # PASSWORDS DON'T MATCH
             else:
                 # LOCK ACCOUNT ON LOGIN ATTEMPTS = 3
-                if document['login_attempts'] + 1 == 3:
+                if document['login_attempts'] == 3:
                     try:
                         mongo.db.Users.update({"email": email_address}, {
-                            "$inc": {
-                                "login_attempts": 1
-                            },
                             "$set": {
-                                "account_locked": True
+                                "account_locked": True,
+                                "account_locked_time": datetime.utcnow()
                             }
                         })
                         return render_template('login.html',

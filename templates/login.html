@@ -1,22 +1,46 @@
 {% extends 'index.html' %}
+
+{% block customJS %}
+<script>
+    $(function () {
+        $("#loginForm").submit( function () {
+            var plaintext_password = $("#password")[0].value;
+
+            $("#loginForm :input").each( function () {
+                $(this).attr('readonly', true);
+            });
+
+            var hashed_value = create_hash(plaintext_password);
+
+            if(hashed_value === null){
+                $("#loginForm :input").each( function () {
+                    $(this).attr('readonly', false);
+                });
+                return false;
+            }
+
+            $("#password")[0].value = hashed_value;
+            return true;
+        });
+
+        {% if error_message %}
+            createUserMessage("{{error_message}}", 5)
+        {% endif %}
+    });
+</script>
+{% endblock customJS %}
+
 {% block content %}
 
-<b style="color: red;">{{error_message}}</b>
-
-<form action="/login" method="post">
+<form id="loginForm" action="/login" method="post">
     <label for="email_address">Email Address:</label>
     <input type="email" name="email_address" id="email_address" required><br>
 
     <label for="password">Password:</label>
     <input type="password"
-           name="password"
-           id="password"
-           class="gen_pass_field"
-           onchange="fill_password(this)"
-           required><br>
-
-    <label for="sec_question">What's 2+2?</label>
-    <input type="text" name="sec_question" id="sec_question" required><br>
+        name="password"
+        id="password"
+        required><br>
 
     <input type="submit" value="Login">
 </form>

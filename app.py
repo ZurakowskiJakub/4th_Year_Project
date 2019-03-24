@@ -73,7 +73,7 @@ def register():
         password = request.form['password']
 
         # CHECK IF EMAIL ALREADY TAKEN
-        if not getUserAccount(email_address):
+        if getUserAccount(email_address):
             return render_template('register.html',
                                    error_message="Sorry, that username is already taken.")
 
@@ -82,18 +82,19 @@ def register():
         # sendEmailVerificationEmail('Jakub_zzzz@hotmail.com')
 
         # GENERATE SALT AND HASH
-        now = str( datetime.now() )
-        salt = hashlib.sha256( bytes( now, encoding='utf8' ) )
-        pass_hash = hashlib.sha256( bytes( str( salt ) + password, encoding='utf8' ) )
+        now = str(datetime.now())
+        salt = hashlib.sha256(bytes(now, encoding='utf8'))
+        pass_hash = hashlib.sha256(bytes((salt.hexdigest() + password), encoding='utf8'))
 
         # CREATE A DICTIONARY WITH DETAILS
         document = {}
         document['email'] = email_address
         document['password'] = {
-            'hash': pass_hash.hexdigest(),
-            'salt': salt.hexdigest()
+            'salt': salt.hexdigest(),
+            'hash': pass_hash.hexdigest()
         }
         document['login_attempts'] = 0
+        document['account_locked'] = False
 
         # ATTEMPT TO PERSIST THE DATA
         try:
@@ -112,25 +113,72 @@ def login():
     """GET: Returns the page allowing the user to login into the service.\n
     POST: Allow the user to enter in password with retrieved salt.
     """
+    # IF USER IS AUTHENTICATED, PUSH HIM TO HOME
     if checkUserAuth():
         return redirect(url_for('medicalHistory'))
 
     if request.method == 'POST':
+        # TAKE IN THE INPUT
         email_address = request.form['email_address'].lower()
+        password = request.form['password']
+        
+        # GET THE USER DOCUMENT
         if getUserAccount(email_address):
-            session['login_email_address'] = email_address
             document = getUserAccount(email_address)
-            password_salt = document['password']['salt']
-            return render_template('login_password.html',
-                                   password_salt=password_salt,
-                                   email_address=email_address)
+
+            # CHECK IF ACCOUNT IS LOCKED
+            if document['account_locked']:
+                return render_template('login.html',
+                                       error_message="This account has been locked. Try again later.")
+
+            # GENERATE SALT AND HASH
+            salt = document['password']['salt']
+            pass_hash = hashlib.sha256(bytes((salt + password), encoding='utf8'))
+            
+            # GENERAL ERROR MESSAGE USED
+            ERRORMESSAGE = "There was an issue logging you in, please try again."
+            
+            # PASSWORDS MATCH
+            if pass_hash.hexdigest() == document['password']['hash']:
+                session['auth'] = email_address
+                return redirect(url_for('medicalHistory'))
+
+            # PASSWORDS DON'T MATCH
+            else:
+                # LOCK ACCOUNT ON LOGIN ATTEMPTS = 3
+                if document['login_attempts'] + 1 == 3:
+                    try:
+                        mongo.db.Users.update({"email": email_address}, {
+                            "$inc": {
+                                "login_attempts": 1
+                            },
+                            "$set": {
+                                "account_locked": True
+                            }
+                        })
+                        return render_template('login.html',
+                                               error_message=ERRORMESSAGE)
+                    except IOError:
+                        return render_template('login.html',
+                                               error_message=ERRORMESSAGE)
+                # INCREMENT LOGIN ATTEMPTS
+                else:
+                    try:
+                        mongo.db.Users.update({"email": email_address}, {
+                            "$inc": {
+                                "login_attempts": 1
+                            }
+                        })
+                        return render_template('login.html',
+                                               error_message=ERRORMESSAGE)
+                    except IOError:
+                        return render_template('login.html',
+                                               error_message=ERRORMESSAGE)
         else:
-            # TODO make it so it generates that username and treats it
-            # as a wrong pass&user combo
-            return render_template('login_username.html',
-                                   error_message="Username not found.")
+            return render_template('login.html',
+                                   error_message=ERRORMESSAGE)
     else:
-        return render_template('login_username.html')
+        return render_template('login.html')
 
 
 @app.route('/validate_login', methods=['POST'])
@@ -266,11 +314,11 @@ def conflictingRequest(error):
 def getUserAccount(email_address: str):
     document = mongo.db.Users.find({"email": email_address})
     if document.count() == 0:
-        return None
+        return False
     elif document.count() > 1:
         # Make it 500
         # abort(409)
-        return None
+        return False
     else:
         return document[0]
 

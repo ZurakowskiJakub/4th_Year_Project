@@ -76,7 +76,8 @@ def register():
         # CHECK IF EMAIL ALREADY TAKEN
         if getUserAccount(email_address):
             return render_template('register.html',
-                                   error_message="Sorry, that username is already taken.")
+                                   error_message="Sorry, that username is \
+                                                 already taken.")
 
         # SEND EMAIL VERIFICATION
         # TODO implement email verification
@@ -85,7 +86,12 @@ def register():
         # GENERATE SALT AND HASH
         now = str(datetime.now())
         salt = hashlib.sha256(bytes(now, encoding='utf8'))
-        pass_hash = hashlib.sha256(bytes((salt.hexdigest() + password), encoding='utf8'))
+        pass_hash = hashlib.sha256(
+            bytes(
+                (salt.hexdigest() + password),
+                encoding='utf8'
+            )
+        )
 
         # CREATE A DICTIONARY WITH DETAILS
         document = {}
@@ -103,7 +109,8 @@ def register():
             mongo.db.Users.insert_one(document)
         except IOError:
             return render_template('register.html',
-                                   error_message="There was an issue saving your data. Please try again.")
+                                   error_message="There was an issue saving \
+                                                 your data. Please try again.")
         return redirect(url_for('login'))
 
     else:
@@ -121,7 +128,12 @@ def login():
 
     if request.method == 'POST':
         # GENERAL ERROR MESSAGE USED
-        ERRORMESSAGE = "There was an issue logging you in, please try again."
+        ERROR_MESSAGE = "There was an issue logging you in, please try again."
+        LOCK_MESSAGE = "This account has been locked. Please try again later."
+        GEN_TEMPLATE = render_template('login.html',
+                                       error_message=ERROR_MESSAGE)
+        LOCK_TEMPLATE = render_template('login.html',
+                                        error_message=LOCK_MESSAGE)
         
         # TAKE IN THE INPUT
         email_address = request.form['email_address'].lower()
@@ -133,20 +145,16 @@ def login():
 
             # CHECK IF ACCOUNT IS LOCKED
             if document['account_locked']:
-                if document['account_locked_time'] + timedelta(minutes=5) <= datetime.utcnow():
-                    try:
-                        mongo.db.Users.update({"email": email_address}, {
-                            "$set": {
-                                "login_attempts": 1,
-                                "account_locked": False
-                            }
-                        })
-                    except IOError:
-                        return render_template('login.html',
-                                               error_message=ERRORMESSAGE)
+                if document['account_locked_time'] + timedelta(minutes=5)<= datetime.utcnow():
+                    if not updateUserAccount(email_address, {
+                        "$set": {
+                            "login_attempts": 1,
+                            "account_locked": False
+                        }
+                    }):
+                        return GEN_TEMPLATE
                 else:
-                    return render_template('login.html',
-                                           error_message="This account has been locked. Try again later.")
+                    return LOCK_TEMPLATE
 
             # GENERATE SALT AND HASH
             salt = document['password']['salt']
@@ -155,49 +163,35 @@ def login():
             # PASSWORDS MATCH
             if pass_hash.hexdigest() == document['password']['hash']:
                 session['auth'] = email_address
-                try:
-                    mongo.db.Users.update({"email": email_address}, {
-                        "$set": {
-                            "login_attempts": 0
-                        }
-                    })
-                except IOError:
-                    return render_template('login.html',
-                                           error_message=ERRORMESSAGE)
+                if not updateUserAccount(email_address, {
+                    "$set": {
+                        "login_attempts": 0
+                    }
+                }):
+                    return GEN_TEMPLATE
                 return redirect(url_for('medicalHistory'))
 
             # PASSWORDS DON'T MATCH
             else:
                 # LOCK ACCOUNT ON LOGIN ATTEMPTS = 3
                 if document['login_attempts'] == 3:
-                    try:
-                        mongo.db.Users.update({"email": email_address}, {
-                            "$set": {
-                                "account_locked": True,
-                                "account_locked_time": datetime.utcnow()
-                            }
-                        })
-                        return render_template('login.html',
-                                               error_message=ERRORMESSAGE)
-                    except IOError:
-                        return render_template('login.html',
-                                               error_message=ERRORMESSAGE)
+                    if not updateUserAccount(email_address, {
+                        "$set": {
+                            "account_locked": True,
+                            "account_locked_time": datetime.utcnow()
+                        }
+                    }, LOCK_TEMPLATE):
+                        return GEN_TEMPLATE
                 # INCREMENT LOGIN ATTEMPTS
                 else:
-                    try:
-                        mongo.db.Users.update({"email": email_address}, {
-                            "$inc": {
-                                "login_attempts": 1
-                            }
-                        })
-                        return render_template('login.html',
-                                               error_message=ERRORMESSAGE)
-                    except IOError:
-                        return render_template('login.html',
-                                               error_message=ERRORMESSAGE)
+                    if not updateUserAccount(email_address, {
+                        "$inc": {
+                            "login_attempts": 1
+                        }
+                    }, GEN_TEMPLATE):
+                        return GEN_TEMPLATE
         else:
-            return render_template('login.html',
-                                   error_message=ERRORMESSAGE)
+            return GEN_TEMPLATE
     else:
         return render_template('login.html')
 
@@ -342,6 +336,18 @@ def getUserAccount(email_address: str):
         return False
     else:
         return document[0]
+
+
+def updateUserAccount(email_address: str, query: dict, should_return=False)->bool:
+    try:
+        mongo.db.Users.update({"email": email_address}, query)
+    except IOError:
+        return False
+    finally:
+        if should_return is not False:
+            return should_return
+        else:
+            return True
 
 
 def checkUserAuth() -> bool:

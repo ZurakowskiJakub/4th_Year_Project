@@ -134,18 +134,18 @@ def login():
                                        error_message=ERROR_MESSAGE)
         LOCK_TEMPLATE = render_template('login.html',
                                         error_message=LOCK_MESSAGE)
-        
+
         # TAKE IN THE INPUT
         email_address = request.form['email_address'].lower()
         password = request.form['password']
-        
+
         # GET THE USER DOCUMENT
         if getUserAccount(email_address):
             document = getUserAccount(email_address)
 
             # CHECK IF ACCOUNT IS LOCKED
             if document['account_locked']:
-                if document['account_locked_time'] + timedelta(minutes=5)<= datetime.utcnow():
+                if document['account_locked_time'] + timedelta(minutes=5) <= datetime.utcnow():
                     if not updateUserAccount(email_address, {
                         "$set": {
                             "login_attempts": 1,
@@ -158,8 +158,13 @@ def login():
 
             # GENERATE SALT AND HASH
             salt = document['password']['salt']
-            pass_hash = hashlib.sha256(bytes((salt + password), encoding='utf8'))
-            
+            pass_hash = hashlib.sha256(
+                bytes(
+                    (salt + password),
+                    encoding='utf8'
+                )
+            )
+
             # PASSWORDS MATCH
             if pass_hash.hexdigest() == document['password']['hash']:
                 session['auth'] = email_address
@@ -217,7 +222,8 @@ def validate_login():
         elif session.get('login_attempts') >= 1:
             session['login_attempts'] += 1
         return render_template('login_username.html',
-                               error_message="Incorrect password, please try again.")
+                               error_message="Incorrect password, \
+                                   please try again.")
 
 
 @app.route('/encryptionKey', methods=['GET'])
@@ -275,7 +281,7 @@ def addMedicalHistory():
     if checkUserAuth():
         if request.method == 'GET':
             return render_template('addMedicalHistory.html')
-        
+
         elif request.method == 'POST':
             history = {}
             if request.form['event_name_encrypted']:
@@ -286,7 +292,7 @@ def addMedicalHistory():
                 history['severity'] = request.form['severity_encrypted']
             if request.form['date_encrypted']:
                 history['date'] = request.form['date_encrypted']
-            
+
             try:
                 mongo.db.Users.update(
                     {"email": session['auth']},
@@ -296,10 +302,10 @@ def addMedicalHistory():
                 )
             except IOError:
                 return redirect(url_for('addMedicalHistory'), 500)
-            
+
             return render_template('addMedicalHistory.html',
                                    info_msg="Item added sucesfully.")
-        
+
         else:
             abort(401)
     else:
@@ -377,9 +383,9 @@ def sendEmailVerificationEmail(recipient: str) -> bool:
     msg['Subject'] = "MediSec"
     msg['From'] = FROM
     msg['To'] = TO
-        
+
     try:
-        s = smtplib.SMTP("smtp.live.com",587)
+        s = smtplib.SMTP("smtp.live.com", 587)
         s.ehlo()
         s.starttls()
         s.ehlo()

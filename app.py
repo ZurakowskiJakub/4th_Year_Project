@@ -13,6 +13,8 @@ from datetime import timedelta
 
 import hashlib
 
+import random
+
 import email
 import smtplib
 
@@ -104,6 +106,12 @@ def register():
         document['account_locked'] = False
         document['account_locked_time'] = datetime.utcnow()
 
+        # GENERATE A RANDOM TOKEN FOR ENC KEY
+        rand_token = '%030x' % random.randrange(16 ** 30)
+        while mongo.db.Users.find({"token": rand_token}).count() > 0:
+            rand_token = '%030x' % random.randrange(16 ** 30)
+        document['token'] = rand_token
+
         # ATTEMPT TO PERSIST THE DATA
         try:
             mongo.db.Users.insert_one(document)
@@ -193,8 +201,9 @@ def login():
                         "$inc": {
                             "login_attempts": 1
                         }
-                    }, GEN_TEMPLATE):
+                    }):
                         return GEN_TEMPLATE
+                    return GEN_TEMPLATE
         else:
             return GEN_TEMPLATE
     else:
@@ -251,6 +260,7 @@ def encryptionKey():
 def medicalHistory():
     if checkUserAuth():
         mongo = getUserAccount(session['auth'])
+        token = mongo.get('token')
         if mongo.get('history'):
             human_readable = []
 
@@ -267,9 +277,11 @@ def medicalHistory():
                 human_readable.append(item)
 
             return render_template('medicalHistory.html',
-                                   history=human_readable)
+                                   history=human_readable,
+                                   token=token)
         else:
-            return render_template('medicalHistory.html')
+            return render_template('medicalHistory.html',
+                                    token=token)
     else:
         # Give 401, forbidden access
         # return redirect('/login', 403)
@@ -314,6 +326,7 @@ def addMedicalHistory():
 
 @app.route('/logout', methods=['POST'])
 def logout():
+    """Logs user out, clearing the session."""
     if checkUserAuth():
         session.clear()
         return redirect(url_for('index'))
@@ -345,15 +358,20 @@ def getUserAccount(email_address: str):
 
 
 def updateUserAccount(email_address: str, query: dict, should_return=False)->bool:
+    """Updates user account by email address. \n
+    @param email_address target email/account. \n
+    @param query a dictionary with mongo query of items to update. \n
+    @return boolean OR render_template()
+    """
     try:
         mongo.db.Users.update({"email": email_address}, query)
     except IOError:
         return False
     finally:
-        if should_return is not False:
-            return should_return
-        else:
-            return True
+        # if should_return is not False:
+        #     return should_return
+        # else:
+        return True
 
 
 def checkUserAuth() -> bool:

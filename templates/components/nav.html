@@ -1,12 +1,13 @@
 <nav>
-    <a href="/">Home</a><!--
----><a href="/register">Register</a><!--
----><a href="/login">Login</a><!--
-    {% if session.get('auth') %}
-        ---><a href="/medicalHistory">Medical History</a><!--
-        ---><a href="/addMedicalHistory">Add Medical History</a><!--
-        ---><a id="logoutNavButton">Logout</a><!--
-        ---><a>Hello {{session.get('auth')}}</a>
+    {% if not session.get('auth') %}
+        <a href="/">Home</a><!--
+    ---><a href="/register">Register</a><!--
+    ---><a href="/login">Login</a>
+    {% else %}
+        <a href="/medicalHistory">Medical History</a><!--
+    ---><a href="/addMedicalHistory">Add Medical History</a><!--
+    ---><a href="#" id="logoutNavButton">Logout</a><!--
+    ---><a href="#">{{session.get('auth')}}</a>
     {% endif %}
 <!---->
 </nav>

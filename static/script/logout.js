@@ -12,7 +12,7 @@ $(function () {
         return true;
     });
 
-    var LOGOUTANIMATIONTIME = 400;
+    var LOGOUTANIMATIONTIME = 300;
     /* Logout on-click cancel button */
     $("#logoutNavButton").click(function (e) { 
         $("#logoutCover").toggle(0, function () {

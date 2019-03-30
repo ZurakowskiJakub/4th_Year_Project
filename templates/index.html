@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
         <title>MediSec</title>
 
@@ -13,8 +13,11 @@
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="{{ url_for('static', filename='dist/bootstrap/css/bootstrap.min.css') }}">
         
+        <!-- Font-Awesome CSS -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
+
         <!-- Local CSS -->
-        <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='style/main.css') }}" />
+        <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='style/style.css') }}" />
         {% block customCSS %}{% endblock customCSS %}
 
         <!-- JQuery -->
@@ -37,9 +40,12 @@
         {% block customJS %}{% endblock customJS %}
     </head>
     <body>
-        {% include 'components/logout.html' %}
+        {# Commented out logout, as implemented on-button
+            {% include 'components/logout.html' %}
+        #}
         {% include 'components/nav.html' %}
-        <div class="hasMargin">
+
+        <div class="container my-3">
             <div id="infoMessageContainer">
                 {% block infoMessages %}
                 {% endblock infoMessages %}
@@ -48,14 +54,26 @@
                 {% block errorMessages %}
                 {% endblock errorMessages %}
             </div>
+
             {% block content %}
 
-            <h1>MediSec</h1>
-            <p>
-                MediSec allows the users to securely store their medical histories using client-side encryption algorithms.
-            </p>
+                <div class="row">
+                    <div class="col-md">
+                        <h1>What is MediSec?</h1>
+                        <p>
+                            MediSec is one of it's kind client-side encrypted medical history service, allowing the users to store their confidential medical records securely. Only the user is able to read the data saved on the server. The only piece of data that the server has access to is the email address that the server uses to communicate important messages and newsletters.
+                        </p>
+                    </div>
+                    <div class="col-md">
+                        <h1>How does MediSec work?</h1>
+                        <p>
+                            MediSec works by utilizing your browsers JavaScript capabilities to compute code.
+                        </p>
+                    </div>
+                </div>
 
             {% endblock content %}
+
         </div>
         {% include 'components/footer.html' %}
     </body>

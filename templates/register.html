@@ -34,52 +34,60 @@
             var obj = $(this);
             var pass = obj[0].value;
             if(checkPasswordPolicy(pass)){
-                obj.removeClass("borderColorFailure");
-                obj.addClass("borderColorSucess");
+                obj.removeClass("border-danger");
+                obj.addClass("border-success");
             }
             else{
-                obj.removeClass("borderColorSucess");
-                obj.addClass("borderColorFailure");
+                obj.removeClass("border-success");
+                obj.addClass("border-danger");
             }
         });
 
         {% if error_message %}
-            createUserMessage("{{error_message}}", 5)
+            createUserMessage("{{error_message}}", 5);
         {% endif %}
     });
 </script>
 {% endblock customJS %}
 
-{% block infoMessages %}
-    <p>Please enter a valid email address.</p>
-    <p>
-        Your password needs to contain the following:
-        <ul>
-            <li>Minimum length of 8 characters.</li>
-            <li>A lowercase letter.</li>
-            <li>An UPPERCASE letter.</li>
-            <li>A digit (0-9).</li>
-            <li>One of the following symbols:</li>
-            <ul>
-                <li>!@#$%&*()</li>
-            </ul>
-        </ul>
-    </p>
-{% endblock infoMessages %}
-
 {% block content %}
+<h1>Register with MediSec</h1>
 
-<form id="registerForm" action="/register" method="post">
-    <label for="email_address">Email Address:</label>
-    <input type="email" name="email_address" id="email_address" required><br>
+<form id="registerForm" action="{{url_for('register')}}" method="post">
+    <div class="form-group row">
+        <label for="email_address" class="col-md-2 col-form-label text-md-right">Email Address:</label>
+        <div class="col-md-10">
+            <input type="email" name="email_address" id="email_address" class="form-control" placeholder="test@MediSec.ie" required>
+        </div>
+    </div>
 
-    <label for="password">Password:</label>
-    <input type="password"
-        name="password"
-        id="password"
-        required><br>
+    <div class="form-group row" class="col-md-2 col-form-label">
+        <label for="password" class="col-md-2 col-form-label text-md-right">Password:</label>
+        <div class="col-md-10">
+            <input type="password" name="password" id="password" class="form-control" placeholder="aBcde1()" required>
+            <small class="form-text text-muted">
+                Your password must have:
+                <ul>
+                    <li>Minimum length of 8 characters.</li>
+                    <li>A lowercase letter.</li>
+                    <li>An UPPERCASE letter.</li>
+                    <li>A digit (0-9).</li>
+                    <li>One of the following symbols:</li>
+                    <ul>
+                        <li>!@#$%&*()</li>
+                    </ul>
+                </ul>
+            </small>
+        </div>
+    </div>
 
-    <input type="submit" value="Register">
+    <div class="form-group row" class="col-md-2 col-form-label">
+        <span class="col-md-2 text-md-right">
+            <input type="submit" class="btn btn-primary py-2 px-4" value="Register">
+        </span>
+        <div class="col-md-10"></div>
+    </div>
+
 </form>
 
 {% endblock content %}

@@ -324,7 +324,7 @@ def addMedicalHistory():
         abort(401)
 
 
-@app.route('/logout', methods=['POST'])
+@app.route('/logout', methods=['GET'])
 def logout():
     """Logs user out, clearing the session."""
     if checkUserAuth():
@@ -372,6 +372,18 @@ def updateUserAccount(email_address: str, query: dict, should_return=False)->boo
         #     return should_return
         # else:
         return True
+
+
+def getUtilHistTypes():
+    document = mongo.db.Util.find({"hist_types"})
+    if document.count() == 0:
+        return False
+    elif document.count() > 1:
+        # Make it 500
+        # abort(409)
+        return False
+    else:
+        return document[0]
 
 
 def checkUserAuth() -> bool:

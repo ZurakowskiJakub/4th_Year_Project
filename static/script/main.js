@@ -119,7 +119,12 @@ function deleteElementAfterTimeout(element, seconds) {
 
 
 function createUserMessage(message, seconds=3, type="error") {
-    var msg = $('<p>');
+    if (type === "info") {
+        var msg = $('<p class="alert alert-info">');
+    }
+    else {
+        var msg = $('<p class="alert alert-danger">');
+    }
     msg[0].innerText = message;
     msg.css('display', 'none');
     $("#" + type + "MessageContainer").append(msg);

@@ -1,17 +1,80 @@
 {% extends 'index.html' %}
+
+{% block customJS %}
+<script>
+    $(function () {
+        {% if error_message %}
+            createUserMessage("{{error_message}}", 5);
+        {% endif %}
+        {% if info_message %}
+            createUserMessage("{{info_message}}", 5, "info");
+        {% endif %}
+    });
+</script>
+{% endblock customJS %}
+
 {% block content %}
 
-<b style="color: red;">{{error_message}}</b>
+<h1>Medical History Type</h1>
 
-<script>
-    // if(checkKey()){
-        var encryption_key = localStorage.getItem('MediSecEncryptionKey');
-    // }
-</script>
+<div class="row">
+    <a href="#" class="col-sm-6 col-md-4 col-lg-3 mb-4 text-decoration-none">
+        <div class="card">
+            <div class="card-header">Doctor Visit</div>
+            <div class="card-body">
+                <span class="fas fa-question d-block h1 text-center"></span>
+                <small class="card-text text-muted">Record a new visit to the doctor / GP</small>
+            </div>
+        </div>
+    </a>
+    <a href="#" class="col-sm-6 col-md-4 col-lg-3 mb-4 text-decoration-none">
+        <div class="card">
+            <div class="card-header">Hospital Visit</div>
+            <div class="card-body">
+                <span class="fas fa-question d-block h1 text-center"></span>
+                <small class="card-text text-muted">Record a new visit to the hospital</small>
+            </div>
+        </div>
+    </a>
+    <a href="#" class="col-sm-6 col-md-4 col-lg-3 mb-4 text-decoration-none">
+        <div class="card">
+            <div class="card-header">Illness</div>
+            <div class="card-body">
+                <span class="fas fa-question d-block h1 text-center"></span>
+                <small class="card-text text-muted">Record an illness</small>
+            </div>
+        </div>
+    </a>
+    <a href="#" class="col-sm-6 col-md-4 col-lg-3 mb-4 text-decoration-none">
+        <div class="card">
+            <div class="card-header">Perscription</div>
+            <div class="card-body">
+                <span class="fas fa-question d-block h1 text-center"></span>
+                <small class="card-text text-muted">Record a perscription</small>
+            </div>
+        </div>
+    </a>
+    <a href="#" class="col-sm-6 col-md-4 col-lg-3 mb-4 text-decoration-none">
+        <div class="card">
+            <div class="card-header">Dentist Visit</div>
+            <div class="card-body">
+                <span class="fas fa-question d-block h1 text-center"></span>
+                <small class="card-text text-muted">Record a new visit to the dentist</small>
+            </div>
+        </div>
+    </a>
+    <a href="#" class="col-sm-6 col-md-4 col-lg-3 mb-4 text-decoration-none">
+        <div class="card">
+            <div class="card-header">Other</div>
+            <div class="card-body">
+                <span class="fas fa-question d-block h1 text-center"></span>
+                <small class="card-text text-muted">Record a custom-filled form</small>
+            </div>
+        </div>
+    </a>
+</div>
 
-<h1>Add a medical hisotry item</h1>
-
-<form action="/addMedicalHistory" method="post">
+<form action="{{url_for('addMedicalHistory')}}" method="post">
     <label for="event_name">Event Name</label>
     <input type="text" name="event_name" id="event_name" class="gen_enc_field" onkeyup="fill_encrypted(this, encryption_key)"><br/>
 

@@ -6,6 +6,14 @@
 $(function () {
     // Generates encrypted fields on page load.
     generate_encrypted_fields();
+    function footer_on_bottom() {
+        var contentHeight = $(window).height();
+        var footerHeight = $('footer').height();
+        var footerTop = $('footer').position().top + footerHeight;
+        if (footerTop < contentHeight) {
+            $('footer').css('margin-top', (contentHeight - footerTop - 8) + 'px');
+        }
+    } footer_on_bottom();
 })
 
 

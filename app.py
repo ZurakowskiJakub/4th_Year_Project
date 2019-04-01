@@ -30,6 +30,28 @@ app.config.from_json("config.json")
 mongo = PyMongo(app)
 
 
+# CHECK DATABASE
+def print_sys_msg(msg: str) -> None:
+    """Prints a system message.
+    Enclosed by multiple stars and stuff.
+    """
+    msg = f"{datetime.now()}\t{str(msg)}"
+    stars = "*" * 50
+    print(stars, msg, stars, sep="\n")
+
+
+# DB Collections
+collections = [
+    'Users'
+]
+for collection in collections:
+    if collection not in mongo.db.collection_names(False):
+        print_sys_msg(f"{collection} collection not in the Database. Dying.")
+        exit()
+    else:
+        print_sys_msg(f"{collection} collection in the Database. OK.")
+
+
 @app.route('/')
 def index():
     """Returns the index.html template"""

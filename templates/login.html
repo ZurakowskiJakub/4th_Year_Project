@@ -8,7 +8,7 @@
             var email_address = $("#email_address")[0].value;
 
             // Store hash of email and password
-            window.localStorage['MediSecEncKey'] = create_hash(email_address+plaintext_password);
+            window.localStorage['MediSecEncKey_base'] = create_hash(email_address+plaintext_password);
 
             $("#loginForm :input").each( function () {
                 $(this).attr('readonly', true);

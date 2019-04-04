@@ -1,5 +1,11 @@
 {% extends 'index.html' %}
 
+{% macro printDecrypted(encryptedString) %}
+    <script>
+        document.write(decrypt( "{{ encryptedString }}", window.localStorage.getItem('MediSecEncKey')));
+    </script>
+{% endmacro %}
+
 {% block customJS %}
 <script>
     $(function () {
@@ -15,24 +21,70 @@
 
 {% block content %}
 <script>
-    window.localStorage['MediSecEncKey'] = create_hash(window.localStorage['MediSecEncKey'] + '{{token}}');
+    if(window.localStorage.getItem('MediSecEncKey_base')){
+        window.localStorage['MediSecEncKey'] = create_hash(window.localStorage['MediSecEncKey_base'] + '{{token}}');
+        window.localStorage.removeItem('MediSecEncKey_base');
+    }
 </script>
 
 <h1>User home-page</h1>
 
+<div class="form-group row" class="col-md-2 col-form-label">
+    <label for="search" class="col-md-2 col-form-label text-md-right">Search:</label>
+    <div class="col-md-10">
+        <input type="search" name="search" id="search" class="form-control" placeholder="Search...">
+    </div>
+</div>
+
 {% if history %}
-    {% for history_item in history %}
-        <div style="border: 1px solid black">
-            {% for name, value in history_item.items() %}
-                <p>
-                    <b>{{name}}:</b>
-                    <script>
-                        document.write(decrypt( "{{ value }}", localStorage.getItem('MediSecEncKey')));
-                    </script>
-                </p>
-            {% endfor %}
+    {% for history_item in history %}        
+        
+        <div class="card my-3 bg-readable" data-toggle="collapse" data-target="#card-contents-{{loop.index}}">
+            
+            {% if history_item['type'] == "DoctorVisit" %}
+                <div class="card-header bg-primary">
+                    <div class="col"><b>Doctor / GP Visit</b> to <b>{{printDecrypted(history_item['doctor'])}}</b></div>
+                    <div class="col-1 text-right"><span class="fas fa-syringe h2"></span></div>
+                </div>
+                <span class="collapse" id="card-contents-{{loop.index}}">
+                    <div class="card-header bg-secondary"><b>Date:</b> {{printDecrypted(history_item['date'])}}</div>
+                    {% if history_item['time'] %}
+                        <div class="card-header bg-secondary"><b>Time:</b> {{printDecrypted(history_item['time'])}}</div>
+                    {% endif %}
+                    <div class="card-body row">
+                        <div class="col-1">
+                            <span class="fas fa-syringe d-block h1 text-center"></span>
+                        </div>
+                        <div class="col">
+                            <p class="card-text text-justify">{{printDecrypted(history_item['desc'])}}</p>
+                        </div>
+                    </div>
+                </span>
+
+            {% endif %}
+            
+            {% if history_item['type'] == "HospitalVisit" %}
+                <div class="card-header bg-primary"><b>Hospital Visit</b> to <b>{{printDecrypted(history_item['hospital'])}}</b></div>
+                <span class="collapse" id="card-contents-{{loop.index}}">
+                    {% if history_item['department'] %}
+                        <div class="card-header bg-secondary"><b>Department:</b> {{printDecrypted(history_item['department'])}}</div>
+                    {% endif %}
+                    {% if history_item['date_released'] %}
+                        <div class="card-header bg-secondary"><b>From:</b> {{printDecrypted(history_item['date'])}} <b>to</b> {{printDecrypted(history_item['date_released'])}}</div>
+                    {% else %}
+                        <div class="card-header bg-secondary"><b>Date:</b> {{printDecrypted(history_item['date'])}}</div>
+                    {% endif %}
+                    <div class="card-body row">
+                        <div class="col-1">
+                            <span class="fas fa-hospital d-block h1 text-center"></span>
+                        </div>
+                        <div class="col">
+                            <p class="card-text text-justify">{{printDecrypted(history_item['desc'])}}</p>
+                        </div>
+                    </div>
+                </span>
+            {% endif %}
         </div>
-        </br>
     {% endfor %}
 
 {% else %}

@@ -18,81 +18,60 @@
 <h1>Medical History Type</h1>
 
 <div class="row">
-    <a href="#" class="col-sm-6 col-md-4 col-lg-3 mb-4 text-decoration-none">
+    <a href="{{url_for('addMedicalHistoryForm', historyType='DoctorVisit')}}" class="col-sm-6 col-md-4 col-lg-3 mb-4 text-decoration-none">
         <div class="card">
             <div class="card-header">Doctor Visit</div>
             <div class="card-body">
-                <span class="fas fa-question d-block h1 text-center"></span>
+                <span class="fas fa-syringe d-block h1 text-center"></span>
                 <small class="card-text text-muted">Record a new visit to the doctor / GP</small>
             </div>
         </div>
     </a>
-    <a href="#" class="col-sm-6 col-md-4 col-lg-3 mb-4 text-decoration-none">
+    <a href="{{url_for('addMedicalHistoryForm', historyType='HospitalVisit')}}" class="col-sm-6 col-md-4 col-lg-3 mb-4 text-decoration-none">
         <div class="card">
             <div class="card-header">Hospital Visit</div>
             <div class="card-body">
-                <span class="fas fa-question d-block h1 text-center"></span>
+                <span class="fas fa-hospital d-block h1 text-center"></span>
                 <small class="card-text text-muted">Record a new visit to the hospital</small>
             </div>
         </div>
     </a>
-    <a href="#" class="col-sm-6 col-md-4 col-lg-3 mb-4 text-decoration-none">
+    <a href="{{url_for('addMedicalHistoryForm', historyType='Illness')}}" class="col-sm-6 col-md-4 col-lg-3 mb-4 text-decoration-none">
         <div class="card">
             <div class="card-header">Illness</div>
             <div class="card-body">
-                <span class="fas fa-question d-block h1 text-center"></span>
+                <span class="fas fa-user d-block h1 text-center"></span>
                 <small class="card-text text-muted">Record an illness</small>
             </div>
         </div>
     </a>
-    <a href="#" class="col-sm-6 col-md-4 col-lg-3 mb-4 text-decoration-none">
+    <a href="{{url_for('addMedicalHistoryForm', historyType='Prescription')}}" class="col-sm-6 col-md-4 col-lg-3 mb-4 text-decoration-none">
         <div class="card">
-            <div class="card-header">Perscription</div>
+            <div class="card-header">Prescription</div>
             <div class="card-body">
-                <span class="fas fa-question d-block h1 text-center"></span>
+                <span class="fas fa-pills d-block h1 text-center"></span>
                 <small class="card-text text-muted">Record a perscription</small>
             </div>
         </div>
     </a>
-    <a href="#" class="col-sm-6 col-md-4 col-lg-3 mb-4 text-decoration-none">
+    <a href="{{url_for('addMedicalHistoryForm', historyType='DentistVisit')}}" class="col-sm-6 col-md-4 col-lg-3 mb-4 text-decoration-none">
         <div class="card">
             <div class="card-header">Dentist Visit</div>
             <div class="card-body">
-                <span class="fas fa-question d-block h1 text-center"></span>
+                <span class="fas fa-tooth d-block h1 text-center"></span>
                 <small class="card-text text-muted">Record a new visit to the dentist</small>
             </div>
         </div>
     </a>
-    <a href="#" class="col-sm-6 col-md-4 col-lg-3 mb-4 text-decoration-none">
+    <a href="{{url_for('addMedicalHistoryForm', historyType='Other')}}" class="col-sm-6 col-md-4 col-lg-3 mb-4 text-decoration-none">
         <div class="card">
             <div class="card-header">Other</div>
             <div class="card-body">
-                <span class="fas fa-question d-block h1 text-center"></span>
+                <span class="fas fa-question-circle d-block h1 text-center"></span>
                 <small class="card-text text-muted">Record a custom-filled form</small>
             </div>
         </div>
     </a>
 </div>
-
-<form action="{{url_for('addMedicalHistory')}}" method="post">
-    <label for="event_name">Event Name</label>
-    <input type="text" name="event_name" id="event_name" class="gen_enc_field" onkeyup="fill_encrypted(this, encryption_key)"><br/>
-
-    <label for="event_description">Event Description</label>
-    <!-- <input type="text" name="event_description" id="event_description" onkeyup="fill_encrypted(this)"><br/> -->
-    <textarea name="event_description" id="event_description" class="gen_enc_field" onkeyup="fill_encrypted(this, encryption_key)"></textarea></br>
-
-    <label for="severity">Severity</label>
-    <select name="severity" id="severity" class="gen_enc_field" onmouseup="fill_encrypted(this, encryption_key)" onkeyup="fill_encrypted(this, encryption_key)" >
-        <option value="light">Light</option>
-        <option value="medium">Medium</option>
-        <option value="severe">Severe</option>
-    </select><br/>
-
-    <label for="date">Date</label>
-    <input type="date" name="date" id="date" class="gen_enc_field" onmouseup="fill_encrypted(this, encryption_key)" onkeyup="fill_encrypted(this, encryption_key)">
-
-    <input type="submit" value="Save">
-</form>
 
 {% endblock content %}

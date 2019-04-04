@@ -1,0 +1,100 @@
+{% extends 'index.html' %}
+
+{% block customJS %}
+<script>
+    $(function () {
+        new Cleave('#date', {
+            date: true,
+            delimiter: '/',
+            datePattern: ['d', 'm', 'Y']
+        });
+        new Cleave('#date_released', {
+            date: true,
+            delimiter: '/',
+            datePattern: ['d', 'm', 'Y']
+        });
+        
+        // ON SUBMIT
+        var form = "#addHospitalVisitForm";
+
+        $(form).submit( function () {
+            $(form+" :input").each( function () {
+                if($(this)[0].value == ""){
+                    $(this).attr('disabled', true);
+                }
+                else{
+                    $(this).attr('readonly', true);
+                }
+            });
+
+            $(form+" :input").not($(form+" input[type=submit]")).each( function () {
+                $(this)[0].value = encrypt($(this)[0].value, window.localStorage.getItem('MediSecEncKey'));
+            });
+
+            // if(hashed_value === null){
+            //     $("#registerForm :input").each( function () {
+            //         $(this).attr('readonly', false);
+            //     });
+            //     return false;
+            // }
+
+            // $("#password")[0].value = hashed_value;
+            return true;
+        });
+
+        {% if error_message %}
+            createUserMessage("{{error_message}}", 5);
+        {% endif %}
+    });
+</script>
+{% endblock customJS %}
+
+{% block content %}
+<h1>Add a Doctor/GP Visit</h1>
+
+<form id="addHospitalVisitForm" action="{{url_for('addMedicalHistoryForm', historyType='HospitalVisit')}}" method="post">
+    <div class="form-group row" class="col-md-2 col-form-label">
+        <label for="hospital" class="col-md-2 col-form-label text-md-right">Hospital:</label>
+        <div class="col-md-10">
+            <input type="text" name="hospital" id="hospital" class="form-control" required>
+        </div>
+    </div>
+
+    <div class="form-group row" class="col-md-2 col-form-label">
+        <label for="department" class="col-md-2 col-form-label text-md-right">Department:</label>
+        <div class="col-md-10">
+            <input type="text" name="department" id="department" class="form-control">
+        </div>
+    </div>
+
+    <div class="form-group row" class="col-md-2 col-form-label">
+        <label for="desc" class="col-md-2 col-form-label text-md-right">Description:</label>
+        <div class="col-md-10">
+            <textarea type="text" name="desc" id="desc" class="form-control" required></textarea>
+        </div>
+    </div>
+    
+    <div class="form-group row" class="col-md-2 col-form-label">
+        <label for="date" class="col-md-2 col-form-label text-md-right">Date:</label>
+        <div class="col-md-10">
+            <input type="text" name="date" id="date" class="form-control" placeholder="dd/mm/YYYY" required>
+        </div>
+    </div>
+
+    <div class="form-group row" class="col-md-2 col-form-label">
+        <label for="date_released" class="col-md-2 col-form-label text-md-right">Date Released:</label>
+        <div class="col-md-10">
+            <input type="text" name="date_released" id="date_released" class="form-control" placeholder="dd/mm/YYYY">
+        </div>
+    </div>
+
+    <div class="form-group row" class="col-md-2 col-form-label">
+        <span class="col-md-2 text-md-right">
+            <input type="submit" class="btn btn-primary py-2 px-4" value="Add">
+        </span>
+        <div class="col-md-10"></div>
+    </div>
+
+</form>
+
+{% endblock content %}

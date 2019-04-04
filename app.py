@@ -284,26 +284,11 @@ def medicalHistory():
         mongo = getUserAccount(session['auth'])
         token = mongo.get('token')
         if mongo.get('history'):
-            human_readable = []
-
-            for history_item in mongo['history']:
-                item = {}
-                if history_item.get('event_name'):
-                    item['Event Name'] = history_item.get('event_name')
-                if history_item.get('event_description'):
-                    item['Event Description'] = history_item.get('event_description')
-                if history_item.get('severity'):
-                    item['Severity'] = history_item.get('severity')
-                if history_item.get('date'):
-                    item['Date'] = history_item.get('date')
-                human_readable.append(item)
-
             return render_template('medicalHistory.html',
-                                   history=human_readable,
+                                   history=mongo.get('history'),
                                    token=token)
         else:
-            return render_template('medicalHistory.html',
-                                    token=token)
+            return render_template('medicalHistory.html')
     else:
         # Give 401, forbidden access
         # return redirect('/login', 403)
@@ -346,6 +331,40 @@ def addMedicalHistory():
         abort(401)
 
 
+@app.route('/addMedicalHistory/<historyType>', methods=['GET', 'POST'])
+def addMedicalHistoryForm(historyType):
+    history_types = [
+        'DoctorVisit',
+        'HospitalVisit',
+        'Illness',
+        'Prescription',
+        'DentistVisit',
+        'Other'
+    ]
+    if checkUserAuth():
+        if historyType not in history_types:
+            abort(404)
+        if request.method == 'GET':
+            return render_template(f"add{historyType}.html")
+
+        elif request.method == 'POST':
+            document = {}
+            document['type'] = historyType
+            for input_box in request.form:
+                document[input_box] = request.form[input_box]
+            mongo.db.Users.update({'email': session['auth']}, {
+                '$push': {
+                    'history': document
+                }
+            })
+            return redirect(url_for('medicalHistory'))
+
+        else:
+            abort(401)
+    else:
+        abort(401)
+
+
 @app.route('/logout', methods=['GET'])
 def logout():
     """Logs user out, clearing the session."""
@@ -359,6 +378,11 @@ def logout():
 @app.errorhandler(401)
 def unauthorisedRequest(error):
     return render_template('error/401.html'), 401
+
+
+@app.errorhandler(404)
+def fileNotFound(error):
+    pass
 
 
 # TODO Make it 500

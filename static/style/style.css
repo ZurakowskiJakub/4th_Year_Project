@@ -5,6 +5,18 @@
     background-color: #02A4D3 !important;
     border-color: #02A4D3 !important;
 }
+.btn-outline-primary{
+    border-color: #02A4D3 !important;
+    color: #02A4D3 !important;
+}
+.btn-outline-primary.active{
+    background-color: #02A4D3 !important;
+    color: #ffffff !important;
+}
+.btn-outline-primary:hover{
+    background-color: #02A4D3 !important;
+    color: #ffffff !important;
+}
 .bg-secondary{
     background-color: #02bbf2 !important;
 }
@@ -13,4 +25,24 @@
 }
 .bg-readable{
     background-color: #eeeeee !important;
+}
+
+
+.fa-tooth{
+    color: #CCCCCC !important;
+}
+.fa-hospital{
+    color: #222222 !important;
+}
+.fa-syringe{
+    color: #02bbf2 !important;
+}
+.fa-user{
+    color: #299617 !important;
+}
+.fa-question-circle{
+    color: #02A4D3 !important;
+}
+.fa-pills{
+    color: #FF5050 !important;
 }

@@ -1,0 +1,233 @@
+{% extends 'index.html' %}
+
+{% block customJS %}
+<script>
+    $(function () {
+        new Cleave('#date', {
+            date: true,
+            delimiter: '/',
+            datePattern: ['d', 'm', 'Y']
+        });
+
+        // SHOW MORE INPUTS ON CLICK
+        var hidden_tracker = 0;
+        $('#addMoreItems').click(function (e) { 
+            e.preventDefault();
+            if(hidden_tracker < 3){
+                ++hidden_tracker;
+                $('.hidden_'+hidden_tracker).slideDown(250);
+                $('.hidden_'+hidden_tracker+' input').attr('required', true)
+                if(hidden_tracker === 3){
+                    $('#addMoreItems').hide();
+                }
+            }
+        });
+
+        // ON SUBMIT
+        var form = "#addPrescriptionForm";
+
+        $(form).submit( function () {
+            $(form+" :input").each( function () {
+                if($(this)[0].value == ""){
+                    $(this).attr('disabled', true);
+                }
+                else{
+                    $(this).attr('readonly', true);
+                }
+            });
+
+            $(form+" :input").not($(form+" input[type=submit]")).each( function () {
+                $(this)[0].value = encrypt($(this)[0].value, window.localStorage.getItem('MediSecEncKey'));
+            });
+
+            // if(hashed_value === null){
+            //     $("#registerForm :input").each( function () {
+            //         $(this).attr('readonly', false);
+            //     });
+            //     return false;
+            // }
+
+            // $("#password")[0].value = hashed_value;
+            return true;
+        });
+
+        {% if error_message %}
+            createUserMessage("{{error_message}}", 5);
+        {% endif %}
+    });
+</script>
+{% endblock customJS %}
+
+{% block customCSS %}
+<style>
+    .hidden_1, .hidden_2, .hidden_3{
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<h1>Add a Prescription</h1>
+
+<form id="addPrescriptionForm" action="{{url_for('addMedicalHistoryForm', historyType='Prescription')}}" method="post">
+    <div class="form-group row">
+        <label for="doctor" class="col-md-2 col-form-label text-md-right">Issuing doctor:</label>
+        <div class="col-md-10">
+            <input type="text" name="doctor" id="doctor" class="form-control" required>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="date" class="col-md-2 col-form-label text-md-right">Date:</label>
+        <div class="col-md-10">
+            <input type="text" name="date" id="date" class="form-control" placeholder="dd/mm/YYYY" required>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="desc" class="col-md-2 col-form-label text-md-right">Description:</label>
+        <div class="col-md-10">
+            <textarea type="text" name="desc" id="desc" class="form-control"></textarea>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="item_name" class="col-md-2 col-form-label text-md-right">Item Name:</label>
+        <div class="col-md-10">
+            <input type="text" name="item_name" id="item_name" class="form-control" placeholder="eg. zopiclone" required>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="item_strength" class="col-md-2 col-form-label text-md-right">Item Strength:</label>
+        <div class="col-md-10">
+            <input type="text" name="item_strength" id="item_strength" class="form-control" placeholder="eg. 7.5mg" required>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="item_instructions" class="col-md-2 col-form-label text-md-right">Item Instructions:</label>
+        <div class="col-md-10">
+            <input type="text" name="item_instructions" id="item_insturctions" class="form-control" placeholder="eg. 1 at night" required>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="item_number" class="col-md-2 col-form-label text-md-right">Number of Items:</label>
+        <div class="col-md-10">
+            <input type="text" name="item_number" id="item_number" class="form-control" placeholder="eg. 14" required>
+        </div>
+    </div>
+
+    <!-- HIDDEN - 1 -->
+    <div class="hidden_1">
+    <hr>
+
+    <div class="form-group row">
+        <label for="item_name" class="col-md-2 col-form-label text-md-right">Item Name:</label>
+        <div class="col-md-10">
+            <input type="text" name="item_name_1" id="item_name_1" class="form-control" placeholder="eg. zopiclone" required>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="item_strength" class="col-md-2 col-form-label text-md-right">Item Strength:</label>
+        <div class="col-md-10">
+            <input type="text" name="item_strength_1" id="item_strength_1" class="form-control" placeholder="eg. 7.5mg" required>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="item_instructions" class="col-md-2 col-form-label text-md-right">Item Instructions:</label>
+        <div class="col-md-10">
+            <input type="text" name="item_instructions_1" id="item_insturctions_1" class="form-control" placeholder="eg. 1 at night" required>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="item_number" class="col-md-2 col-form-label text-md-right">Number of Items:</label>
+        <div class="col-md-10">
+            <input type="text" name="item_number_1" id="item_number_1" class="form-control" placeholder="eg. 14" required>
+        </div>
+    </div>
+    </div>
+
+    <!-- HIDDEN - 2 -->
+    <div class="hidden_2">
+    <hr>
+
+    <div class="form-group row">
+        <label for="item_name" class="col-md-2 col-form-label text-md-right">Item Name:</label>
+        <div class="col-md-10">
+            <input type="text" name="item_name_2" id="item_name_2" class="form-control" placeholder="eg. zopiclone" required>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="item_strength" class="col-md-2 col-form-label text-md-right">Item Strength:</label>
+        <div class="col-md-10">
+            <input type="text" name="item_strength_2" id="item_strength_2" class="form-control" placeholder="eg. 7.5mg" required>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="item_instructions" class="col-md-2 col-form-label text-md-right">Item Instructions:</label>
+        <div class="col-md-10">
+            <input type="text" name="item_instructions_2" id="item_insturctions_2" class="form-control" placeholder="eg. 1 at night" required>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="item_number" class="col-md-2 col-form-label text-md-right">Number of Items:</label>
+        <div class="col-md-10">
+            <input type="text" name="item_number_2" id="item_number_2" class="form-control" placeholder="eg. 14" required>
+        </div>
+    </div>
+    </div>
+
+    <!-- HIDDEN - 3 -->
+    <div class="hidden_3">
+    <hr>
+
+    <div class="form-group row">
+        <label for="item_name" class="col-md-2 col-form-label text-md-right">Item Name:</label>
+        <div class="col-md-10">
+            <input type="text" name="item_name_3" id="item_name_3" class="form-control" placeholder="eg. zopiclone" required>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="item_strength" class="col-md-2 col-form-label text-md-right">Item Strength:</label>
+        <div class="col-md-10">
+            <input type="text" name="item_strength_3" id="item_strength_3" class="form-control" placeholder="eg. 7.5mg" required>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="item_instructions" class="col-md-2 col-form-label text-md-right">Item Instructions:</label>
+        <div class="col-md-10">
+            <input type="text" name="item_instructions_3" id="item_insturctions_3" class="form-control" placeholder="eg. 1 at night" required>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="item_number" class="col-md-2 col-form-label text-md-right">Number of Items:</label>
+        <div class="col-md-10">
+            <input type="text" name="item_number_3" id="item_number_3" class="form-control" placeholder="eg. 14" required>
+        </div>
+    </div>
+    </div>
+
+    <div class="form-group row">
+        <span class="col-md-2 text-md-right">
+            <input type="submit" class="btn btn-primary py-2 px-4 my-1" value="Save">
+        </span>
+        <div class="col-md-10">
+            <button id="addMoreItems" class="btn btn-primary py-2 px-4 my-1">Add More Items</button>
+        </div>
+    </div>
+
+</form>
+
+{% endblock content %}

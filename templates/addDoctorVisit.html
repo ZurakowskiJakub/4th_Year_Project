@@ -49,7 +49,7 @@
 {% endblock customJS %}
 
 {% block content %}
-<h1>Add a Doctor/GP Visit</h1>
+<h1>Add a Doctor Visit</h1>
 
 <form id="addDoctorVisitForm" action="{{url_for('addMedicalHistoryForm', historyType='DoctorVisit')}}" method="post">
     <div class="form-group row" class="col-md-2 col-form-label">
@@ -59,28 +59,28 @@
         </div>
     </div>
 
-    <div class="form-group row" class="col-md-2 col-form-label">
+    <div class="form-group row">
         <label for="desc" class="col-md-2 col-form-label text-md-right">Description:</label>
         <div class="col-md-10">
             <textarea type="text" name="desc" id="desc" class="form-control" required></textarea>
         </div>
     </div>
     
-    <div class="form-group row" class="col-md-2 col-form-label">
+    <div class="form-group row">
         <label for="date" class="col-md-2 col-form-label text-md-right">Date:</label>
         <div class="col-md-10">
             <input type="text" name="date" id="date" class="form-control" placeholder="dd/mm/YYYY" required>
         </div>
     </div>
 
-    <div class="form-group row" class="col-md-2 col-form-label">
+    <div class="form-group row">
         <label for="time" class="col-md-2 col-form-label text-md-right">Time:</label>
         <div class="col-md-10">
             <input type="text" name="time" id="time" class="form-control" placeholder="hh:mm">
         </div>
     </div>
 
-    <div class="form-group row" class="col-md-2 col-form-label">
+    <div class="form-group row">
         <span class="col-md-2 text-md-right">
             <input type="submit" class="btn btn-primary py-2 px-4" value="Add">
         </span>

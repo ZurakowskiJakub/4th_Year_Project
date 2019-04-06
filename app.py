@@ -197,13 +197,14 @@ def login():
 
             # PASSWORDS MATCH
             if pass_hash.hexdigest() == document['password']['hash']:
-                session['auth'] = email_address
                 if not updateUserAccount(email_address, {
                     "$set": {
-                        "login_attempts": 0
+                        "login_attempts": 0,
+                        "last_login": datetime.utcnow()
                     }
                 }):
                     return GEN_TEMPLATE
+                session['auth'] = email_address
                 return redirect(url_for('medicalHistory'))
 
             # PASSWORDS DON'T MATCH
@@ -284,8 +285,21 @@ def medicalHistory():
         mongo = getUserAccount(session['auth'])
         token = mongo.get('token')
         if mongo.get('history'):
+            medical_history = mongo.get('history')
+            medical_history.reverse()
+            category = None
+            if request.args.get('cat'):
+                category = request.args.get('cat')
+                medical_history = list(filter(lambda a: a['type'] == category, medical_history))
+            sort = "dateDsc"
+            if request.args.get('sort'):
+                sort = request.args.get('sort')
+            if sort == "dateAsc":
+                medical_history.reverse()
             return render_template('medicalHistory.html',
-                                   history=mongo.get('history'),
+                                   history=medical_history[:10],
+                                   sort=sort,
+                                   cat=category,
                                    token=token)
         else:
             return render_template('medicalHistory.html')
@@ -437,6 +451,9 @@ def checkUserAuth() -> bool:
     """
     if session.get('auth'):
         # User is Authenticated
+        document = getUserAccount(session.get('auth'))
+        if datetime.utcnow() - timedelta(days=1) >= document['last_login']:
+            return False
         return True
     elif not session.get('auth'):
         # User is not Authenticated
@@ -477,4 +494,4 @@ def sendEmailVerificationEmail(recipient: str) -> bool:
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=404)
+    app.run(debug=True, host="0.0.0.0", port=404)

@@ -5,11 +5,14 @@ from flask import render_template
 from flask import session
 from flask import abort
 from flask import url_for
+from flask import flash
 
 from flask_pymongo import PyMongo
 
 from datetime import datetime
 from datetime import timedelta
+
+from util import token
 
 import hashlib
 
@@ -103,10 +106,6 @@ def register():
                                    error_message="Sorry, that username is \
                                                  already taken.")
 
-        # SEND EMAIL VERIFICATION
-        # TODO implement email verification
-        # sendEmailVerificationEmail('Jakub_zzzz@hotmail.com')
-
         # GENERATE SALT AND HASH
         now = str(datetime.now())
         salt = hashlib.sha256(bytes(now, encoding='utf8'))
@@ -127,6 +126,7 @@ def register():
         document['login_attempts'] = 0
         document['account_locked'] = False
         document['account_locked_time'] = datetime.utcnow()
+        document['valid_email'] = False
 
         # GENERATE A RANDOM TOKEN FOR ENC KEY
         rand_token = '%030x' % random.randrange(16 ** 30)
@@ -141,6 +141,8 @@ def register():
             return render_template('register.html',
                                    error_message="There was an issue saving \
                                                  your data. Please try again.")
+        verification_token = token.generateToken(email_address)
+        sendVerificationEmail(email_address, verification_token)
         return redirect(url_for('login'))
 
     else:
@@ -157,13 +159,16 @@ def login():
         return redirect(url_for('medicalHistory'))
 
     if request.method == 'POST':
-        # GENERAL ERROR MESSAGE USED
+        # GENERAL RENDER TEMPLATES
         ERROR_MESSAGE = "There was an issue logging you in, please try again."
         LOCK_MESSAGE = "This account has been locked. Please try again later."
+        EMAIL_MESSAGE = "Please validate your email address."
         GEN_TEMPLATE = render_template('login.html',
                                        error_message=ERROR_MESSAGE)
         LOCK_TEMPLATE = render_template('login.html',
                                         error_message=LOCK_MESSAGE)
+        EMAIL_TEMPLATE = render_template('login.html',
+                                         error_message=EMAIL_MESSAGE)
 
         # TAKE IN THE INPUT
         email_address = request.form['email_address'].lower()
@@ -172,6 +177,10 @@ def login():
         # GET THE USER DOCUMENT
         if getUserAccount(email_address):
             document = getUserAccount(email_address)
+
+            # CHECK IF ACCOUNT HAS VALIDATED EMAIL
+            if document['valid_email'] is False:
+                return EMAIL_TEMPLATE
 
             # CHECK IF ACCOUNT IS LOCKED
             if document['account_locked']:
@@ -258,6 +267,50 @@ def validate_login():
                                    please try again.")
 
 
+@app.route('/validateEmail/<user_token>', methods=['GET'])
+def validateEmail(user_token):
+    # IF LOGGED IN, REDIRECT TO HOME
+    if checkUserAuth():
+        return redirect(url_for('medicalHistory'))
+    
+    valid_token = token.confirmToken(user_token)
+    if valid_token is not False:
+        updateUserAccount(valid_token, {
+            "$set": {
+                "valid_email": True
+            }
+        })
+        flash("Email sucessfully validated.", category="info")
+        return redirect(url_for('login'))
+    else:
+        flash("Email unsucesfully validated. Please try again.",
+              category="error")
+        return redirect(url_for('resendValidationEmail'))
+
+
+@app.route('/resendValidationEmail', methods=['GET', 'POST'])
+def resendValidationEmail():
+    """GET: Returns the page to resend the validation email.
+    POST: Checks the email and sends out a new validation email.
+    """
+    # IF LOGGED IN, REDIRECT TO HOME
+    if checkUserAuth():
+        return redirect(url_for('medicalHistory'))
+
+    if request.method == 'POST':
+        email_address = request.form['email_address'].lower()
+        if getUserAccount(email_address) is False:
+            flash("Error sending validation email address. Please try again.",
+                  category="error")
+            return redirect(url_for('resendValidationEmail'))
+        verification_token = token.generateToken(email_address)
+        sendVerificationEmail(email_address, verification_token)
+        flash("Validation email sent!", category="info")
+        return redirect(url_for('login'))
+    else:
+        return render_template('resendValidationEmail.html')
+
+
 @app.route('/encryptionKey', methods=['GET'])
 def encryptionKey():
     if checkUserAuth():
@@ -296,10 +349,16 @@ def medicalHistory():
                 sort = request.args.get('sort')
             if sort == "dateAsc":
                 medical_history.reverse()
+            res_lim = "10"
+            if request.args.get('lim'):
+                res_lim = request.args.get('lim')
+            if res_lim == "10":
+                medical_history = medical_history[:10]
             return render_template('medicalHistory.html',
-                                   history=medical_history[:10],
+                                   history=medical_history,
                                    sort=sort,
                                    cat=category,
+                                   lim=res_lim,
                                    token=token)
         else:
             return render_template('medicalHistory.html')
@@ -364,6 +423,13 @@ def addMedicalHistoryForm(historyType):
         elif request.method == 'POST':
             document = {}
             document['type'] = historyType
+
+            # ADD _ID
+            rand_token = '%030x' % random.randrange(16 ** 30)
+            while mongo.db.Users.find({"_id": rand_token}).count() > 0:
+                rand_token = '%030x' % random.randrange(16 ** 30)
+            document['_id'] = rand_token
+            
             for input_box in request.form:
                 document[input_box] = request.form[input_box]
             mongo.db.Users.update({'email': session['auth']}, {
@@ -379,11 +445,48 @@ def addMedicalHistoryForm(historyType):
         abort(401)
 
 
+@app.route('/removeMedicalHisotryItem/<item_id>', methods=['GET'])
+def removeMedicalHistoryItem(item_id):
+    """GET: Removes the history item with the given _id
+    """
+    if checkUserAuth():
+        email_address = session['auth']
+        if not updateUserAccount(email_address, {
+            "$pull": {
+                "history": {
+                    "_id": item_id
+                }
+            }
+        }):
+            flash("Error removing the item. Please try again.",
+                  category="error")
+            return redirect(url_for('medicalHistory'))
+        flash("Item removed sucesfully.", category="info")
+        return redirect(url_for('medicalHistory'))
+    
+    else:
+        abort(401)
+
+
+@app.route('/account', methods=['GET', 'POST'])
+def account():
+    if checkUserAuth():
+        if request.method == 'POST':
+            pass
+        
+        else:
+            return render_template('account.html')
+
+    else:
+        abort(401)
+
+
 @app.route('/logout', methods=['GET'])
 def logout():
     """Logs user out, clearing the session."""
     if checkUserAuth():
         session.clear()
+        flash("Sucessfully logged out.", category="info")
         return redirect(url_for('index'))
     else:
         abort(401)
@@ -417,7 +520,7 @@ def getUserAccount(email_address: str):
         return document[0]
 
 
-def updateUserAccount(email_address: str, query: dict, should_return=False)->bool:
+def updateUserAccount(email_address: str, query: dict)->bool:
     """Updates user account by email address. \n
     @param email_address target email/account. \n
     @param query a dictionary with mongo query of items to update. \n
@@ -428,9 +531,6 @@ def updateUserAccount(email_address: str, query: dict, should_return=False)->boo
     except IOError:
         return False
     finally:
-        # if should_return is not False:
-        #     return should_return
-        # else:
         return True
 
 
@@ -460,18 +560,19 @@ def checkUserAuth() -> bool:
         return False
 
 
-def sendEmailVerificationEmail(recipient: str) -> bool:
+def sendVerificationEmail(recipient: str, token: str) -> bool:
     """Sends an email using the smtp connection
     Returns true if sent, false if failed.
     """
-    PASSWORD = "jakeisgreat101"
-    FROM = "jakub_zzzz@hotmail.com"
+    PASSWORD = app.config['EMAIL_PASSWORD']
+    FROM = app.config['EMAIL_USERNAME']
     TO = recipient
 
     msg = email.message_from_string(f"""
-    You have sucesfully registered.
+    You have sucesfully registered with MediSec.
     Please click the link below to verify your email.
     You won't be able to log-in unless you do this.
+    <a href="http://{app.config['EXTERNAL_HOST']}{url_for('validateEmail', user_token=token)}">Click Here.</a>
     """)
     msg['Subject'] = "MediSec"
     msg['From'] = FROM

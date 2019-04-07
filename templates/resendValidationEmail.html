@@ -1,0 +1,38 @@
+{% extends 'index.html' %}
+
+{% block customJS %}
+<script>
+    $(function () {
+        var form = "#resendValidationEmailForm";
+        
+        $(form).submit( function () {
+            $(form + " :input").each( function () {
+                $(this).attr('readonly', true);
+            });
+            return true;
+        });
+    });
+</script>
+{% endblock customJS %}
+
+{% block content %}
+
+<h1>Resend MediSec Validation Email</h1>
+
+<form id="resendValidationEmailForm" action="{{url_for('resendValidationEmail')}}" method="post">
+    <div class="form-group row">
+        <label for="email_address" class="col-md-2 col-form-label text-md-right required">Email Address:</label>
+        <div class="col-md-10">
+            <input type="email" name="email_address" id="email_address" class="form-control" placeholder="test@MediSec.ie" required>
+        </div>
+    </div>
+
+    <div class="form-group row" class="col-md-2 col-form-label">
+        <span class="col-md-2 text-md-right">
+            <input type="submit" class="btn btn-primary py-2 px-4" value="Resend Validation Email">
+        </span>
+    </div>
+
+</form>
+
+{% endblock content %}

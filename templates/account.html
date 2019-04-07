@@ -1,0 +1,201 @@
+{% extends 'index.html' %}
+
+{% block customJS %}
+<script>
+    $(function () {
+        new Cleave('#dob', {
+            date: true,
+            delimiter: '/',
+            datePattern: ['d', 'm', 'Y']
+        });
+        new Cleave('#height', {
+            blocks: [3]
+        });
+        
+        // ON SUBMIT
+        var form = "#addHospitalVisitForm";
+
+        $(form).submit( function () {
+            $(form+" :input").each( function () {
+                if($(this)[0].value == ""){
+                    $(this).attr('disabled', true);
+                }
+                else{
+                    $(this).attr('readonly', true);
+                }
+            });
+
+            $(form+" :input").not($(form+" input[type=submit]")).each( function () {
+                $(this)[0].value = encrypt($(this)[0].value, window.localStorage.getItem('MediSecEncKey'));
+            });
+
+            return true;
+        });
+    });
+</script>
+{% endblock customJS %}
+
+{% block content %}
+
+<h1>Account Details</h1>
+
+<p>
+    Use this page to update your account information. None of the information is required. If set, this information appears at the top of the printed medical history page.
+</p>
+
+<form id="accountForm" action="{{url_for('account')}}" method="post">
+    <div class="form-group row">
+        <label for="forename" class="col-md-2 col-form-label text-md-right">Forename:</label>
+        <div class="col-md-10">
+            <input type="forename" name="forename" id="forename" class="form-control">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="surname" class="col-md-2 col-form-label text-md-right">Surname:</label>
+        <div class="col-md-10">
+            <input type="surname" name="surname" id="surname" class="form-control">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="dob" class="col-md-2 col-form-label text-md-right">Date of Birth:</label>
+        <div class="col-md-10">
+            <input type="text" name="dob" id="dob" class="form-control" placeholder="dd/mm/YYYY">
+        </div>
+    </div>
+    
+    <div class="form-group row">
+        <label for="bloodType" class="col-md-2 col-form-label text-md-right">Blood Type:</label>
+        <div class="col-md-10">
+            <!-- <input type="text" name="dob" id="dob" class="form-control" placeholder="dd/mm/YYYY"> -->
+            <select name="bloodType" id="bloodType" class="form-control">
+                <option value="oMinus">O-</option>
+                <option value="oPlus">O+</option>
+                <option value="aMinus">A-</option>
+                <option value="aPlus">A+</option>
+                <option value="bMinus">B-</option>
+                <option value="bPlus">B+</option>
+                <option value="abMinus">AB-</option>
+                <option value="abPlus">AB+</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="height" class="col-md-2 col-form-label text-md-right">Height (centimeters):</label>
+        <div class="col-md-10">
+            <input type="text" name="height" id="height" class="form-control" placeholder="### cm">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="phoneNumber" class="col-md-2 col-form-label text-md-right">Mobile No:</label>
+        <div class="col-md-10">
+            <input type="mobile" name="phoneNumber" id="phoneNumber" class="form-control">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="landlineNumber" class="col-md-2 col-form-label text-md-right">Landline No:</label>
+        <div class="col-md-10">
+            <input type="landline" name="landlineNumber" id="landlineNumber" class="form-control">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="address1" class="col-md-2 col-form-label text-md-right">Address 1:</label>
+        <div class="col-md-10">
+            <input type="address" name="address1" id="address1" class="form-control">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="address2" class="col-md-2 col-form-label text-md-right">Address 2:</label>
+        <div class="col-md-10">
+            <input type="address" name="address2" id="address2" class="form-control">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="address3" class="col-md-2 col-form-label text-md-right">Address 3:</label>
+        <div class="col-md-10">
+            <input type="address" name="address3" id="address3" class="form-control">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="town" class="col-md-2 col-form-label text-md-right">City / Town:</label>
+        <div class="col-md-10">
+            <input type="address" name="town" id="town" class="form-control">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="region" class="col-md-2 col-form-label text-md-right">County / Region:</label>
+        <div class="col-md-10">
+            <input type="region" name="region" id="region" class="form-control">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="postcode" class="col-md-2 col-form-label text-md-right">Eircode / Postcode:</label>
+        <div class="col-md-10">
+            <input type="postcode" name="postcode" id="postcode" class="form-control">
+            <small class="text-muted">
+                For Irish users, you can find your Eircode <a href="http://eircode.ie">here</a>.
+            </small>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="country" class="col-md-2 col-form-label text-md-right">Country:</label>
+        <div class="col-md-10">
+            <input type="country" name="country" id="country" class="form-control">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <span class="col-md-2 text-md-right">
+            <input type="submit" class="btn btn-primary py-2 px-4" value="Save">
+        </span>
+        <div class="col-md-10"></div>
+    </div>
+
+</form>
+
+<hr>
+
+<h1>Password change</h1>
+
+<form id="resetPasswordForm" action="#{#{{url_for('resetPassword')}}#}" method="post">
+
+    <div class="form-group row">
+        <label for="org_pass" class="col-md-2 col-form-label text-md-right required">Current Password:</label>
+        <div class="col-md-10">
+            <input type="password" name="org_pass" id="org_pass" class="form-control" required>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="new_pass" class="col-md-2 col-form-label text-md-right required">New Password:</label>
+        <div class="col-md-10">
+            <input type="password" name="new_pass" id="new_pass" class="form-control" required>
+        </div>
+    </div>
+
+    <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" name="agreement" id="agreement" required>
+        <label class="form-check-label required" for="agreement">By checking this, I understand that the password change process involves all the data currently stored on the service to be decrypted client-side and re-encrypted using the new password & token combination, which may take some time, depending on the amount of data. I also understand that if for any reason this process should be interupted I can potentially loose all of my data.</label>
+    </div>
+
+    <div class="form-group row">
+        <span class="col-md-2 text-md-right">
+            <input type="submit" class="btn btn-primary py-2 px-4" value="Save">
+        </span>
+        <div class="col-md-10"></div>
+    </div>
+
+</form>
+
+{% endblock content %}

@@ -46,3 +46,8 @@
 .fa-pills{
     color: #FF5050 !important;
 }
+
+.required::after{
+    content: " *";
+    color: red;
+}

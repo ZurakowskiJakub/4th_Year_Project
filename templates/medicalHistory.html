@@ -35,15 +35,15 @@
     }
 </script>
 
-<h1>Medical History</h1>
+<h1>View Medical History</h1>
 
 {% if history or cat or sort %}
 
     <div class="form-group row">
         <label class="col-md-2 col-form-label text-md-right">Sort:</label>
         <div class="col-md">
-            <a href="{{url_for('medicalHistory', cat=cat, sort='dateDsc')}}" class="btn btn-outline-primary {%if sort == 'dateDsc'%}active{%endif%}">Date Created Dsc.</a>
-            <a href="{{url_for('medicalHistory', cat=cat, sort='dateAsc')}}" class="btn btn-outline-primary {%if sort == 'dateAsc'%}active{%endif%}">Date Created Asc.</a>
+            <a href="{{url_for('medicalHistory', cat=cat, sort='dateDsc', lim=lim)}}" class="btn btn-outline-primary {%if sort == 'dateDsc'%}active{%endif%}">Date Created Dsc.</a>
+            <a href="{{url_for('medicalHistory', cat=cat, sort='dateAsc', lim=lim)}}" class="btn btn-outline-primary {%if sort == 'dateAsc'%}active{%endif%}">Date Created Asc.</a>
         </div>
 
         <label for="search" class="col-md-1 col-form-label text-md-right">Search:</label>
@@ -53,15 +53,23 @@
     </div>
 
     <div class="form-group row">
-        <label class="col-md-2 col-form-label text-md-right">Show:</label>
+        <label class="col-md-2 col-form-label text-md-right">Show Category:</label>
         <div class="col-md">
-            <a href="{{url_for('medicalHistory', cat='', sort=sort)}}" class="mb-1 btn btn-outline-primary {%if cat == None%}active{%endif%}">All</a>
-            <a href="{{url_for('medicalHistory', cat='DoctorVisit', sort=sort)}}" class="mb-1 btn btn-outline-primary {%if cat=='DoctorVisit'%}active{%endif%}">Doctor Visits</a>
-            <a href="{{url_for('medicalHistory', cat='HospitalVisit', sort=sort)}}" class="mb-1 btn btn-outline-primary {%if cat=='HospitalVisit'%}active{%endif%}">Hospital Visits</a>
-            <a href="{{url_for('medicalHistory', cat='Illness', sort=sort)}}" class="mb-1 btn btn-outline-primary {%if cat=='Illness'%}active{%endif%}">Illnesses</a>
-            <a href="{{url_for('medicalHistory', cat='Prescription', sort=sort)}}" class="mb-1 btn btn-outline-primary {%if cat=='Prescription'%}active{%endif%}">Prescriptions</a>
-            <a href="{{url_for('medicalHistory', cat='DentalVisit', sort=sort)}}" class="mb-1 btn btn-outline-primary {%if cat=='DentalVisit'%}active{%endif%}">Dental Visits</a>
-            <a href="{{url_for('medicalHistory', cat='Other', sort=sort)}}" class="mb-1 btn btn-outline-primary {%if cat=='Other'%}active{%endif%}">Other</a>
+            <a href="{{url_for('medicalHistory', cat='', sort=sort, lim=lim)}}" class="mb-1 btn btn-outline-primary {%if cat == None%}active{%endif%}">All</a>
+            <a href="{{url_for('medicalHistory', cat='DoctorVisit', sort=sort, lim=lim)}}" class="mb-1 btn btn-outline-primary {%if cat=='DoctorVisit'%}active{%endif%}">Doctor Visits</a>
+            <a href="{{url_for('medicalHistory', cat='HospitalVisit', sort=sort, lim=lim)}}" class="mb-1 btn btn-outline-primary {%if cat=='HospitalVisit'%}active{%endif%}">Hospital Visits</a>
+            <a href="{{url_for('medicalHistory', cat='Illness', sort=sort, lim=lim)}}" class="mb-1 btn btn-outline-primary {%if cat=='Illness'%}active{%endif%}">Illnesses</a>
+            <a href="{{url_for('medicalHistory', cat='Prescription', sort=sort, lim=lim)}}" class="mb-1 btn btn-outline-primary {%if cat=='Prescription'%}active{%endif%}">Prescriptions</a>
+            <a href="{{url_for('medicalHistory', cat='DentalVisit', sort=sort, lim=lim)}}" class="mb-1 btn btn-outline-primary {%if cat=='DentalVisit'%}active{%endif%}">Dental Visits</a>
+            <a href="{{url_for('medicalHistory', cat='Other', sort=sort, lim=lim)}}" class="mb-1 btn btn-outline-primary {%if cat=='Other'%}active{%endif%}">Other</a>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-md-2 col-form-label text-md-right">Limit Results:</label>
+        <div class="col-md">
+            <a href="{{url_for('medicalHistory', cat=cat, sort=sort, lim='10')}}" class="mb-1 btn btn-outline-primary {%if lim == '10'%}active{%endif%}">10</a>
+            <a href="{{url_for('medicalHistory', cat=cat, sort=sort, lim='all')}}" class="mb-1 btn btn-outline-primary {%if lim == 'all'%}active{%endif%}">All</a>
         </div>
     </div>
 
@@ -74,7 +82,7 @@
         <div class="card my-3 bg-readable">
             
             {% if history_item['type'] == "DoctorVisit" %}
-                <div class="card-header bg-primary" data-toggle="collapse" data-target="#card-contents-{{loop.index}}">
+                <div class="card-header bg-primary clearfix" data-toggle="collapse" data-target="#card-contents-{{loop.index}}">
                     <span class="fas fa-syringe h2 mr-2"></span>
                     <span><b>Doctor / GP Visit</b> to <b>{{printDecrypted(history_item['doctor'])}}</b></span>
                 </div>
@@ -86,8 +94,12 @@
                     <div class="card-body">
                         <p class="card-text text-justify">{{printDecrypted(history_item['desc'])}}</p>
                     </div>
+                    <div class="card-footer text-right">
+                        <a href="{{url_for('removeMedicalHistoryItem', item_id=history_item['_id'])}}" class="text-reset">
+                            Delete <span class="fas fa-trash-alt h4"></span>
+                        </a>
+                    </div>
                 </span>
-
             {% endif %}
             
             {% if history_item['type'] == "HospitalVisit" %}
@@ -106,6 +118,11 @@
                     {% endif %}
                     <div class="card-body">
                         <p class="card-text text-justify">{{printDecrypted(history_item['desc'])}}</p>
+                    </div>
+                    <div class="card-footer text-right">
+                        <a href="{{url_for('removeMedicalHistoryItem', item_id=history_item['_id'])}}" class="text-reset">
+                            Delete <span class="fas fa-trash-alt h4"></span>
+                        </a>
                     </div>
                 </span>
             {% endif %}
@@ -164,6 +181,11 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="card-footer text-right">
+                        <a href="{{url_for('removeMedicalHistoryItem', item_id=history_item['_id'])}}" class="text-reset">
+                            Delete <span class="fas fa-trash-alt h4"></span>
+                        </a>
+                    </div>
                 </span>
             {% endif %}
 
@@ -184,6 +206,11 @@
                         <p class="card-text text-justify">{{printDecrypted(history_item['desc'])}}</p>
                     </div>
                     {% endif %}
+                    <div class="card-footer text-right">
+                        <a href="{{url_for('removeMedicalHistoryItem', item_id=history_item['_id'])}}" class="text-reset">
+                            Delete <span class="fas fa-trash-alt h4"></span>
+                        </a>
+                    </div>
                 </span>
             {% endif %}
         </div>

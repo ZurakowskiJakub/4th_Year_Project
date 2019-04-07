@@ -40,6 +40,17 @@
         <script src="{{ url_for('static', filename='script/cookies.js') }}"></script>
         <script src="{{ url_for('static', filename='script/logout.js') }}"></script>
         <script src="{{ url_for('static', filename='script/main.js') }}"></script>
+        <script>
+            $(function () {
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for cat, msg in messages %}
+                            createUserMessage("{{msg}}", 5, type='{{cat}}')
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            });
+        </script>
         {% block customJS %}{% endblock customJS %}
     </head>
     <body>

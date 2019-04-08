@@ -1,5 +1,11 @@
 {% extends 'index.html' %}
 
+{% macro printDecrypted(encryptedString) %}
+    <script>
+        document.write(decrypt( "{{ encryptedString }}", window.localStorage.getItem('MediSecEncKey')));
+    </script>
+{% endmacro %}
+
 {% block customJS %}
 <script>
     $(function () {
@@ -11,9 +17,25 @@
         new Cleave('#height', {
             blocks: [3]
         });
+
+        {% if account_details %}
         
+            // FILL THE FORM
+            var account_details = {};
+            {% for key, value in account_details.items() %}
+                account_details['{{key}}'] = decrypt( "{{ value }}", window.localStorage.getItem('MediSecEncKey'));
+            {% endfor %}
+
+            var entries = Object.entries(account_details);
+            for(const [key, value] of entries){
+                    $('#'+key)[0].value = value;
+            };
+            console.log(account_details);
+
+        {% endif %}
+
         // ON SUBMIT
-        var form = "#addHospitalVisitForm";
+        var form = "#accountForm";
 
         $(form).submit( function () {
             $(form+" :input").each( function () {
@@ -64,21 +86,18 @@
             <input type="text" name="dob" id="dob" class="form-control" placeholder="dd/mm/YYYY">
         </div>
     </div>
-    
+
+    <div class="form-group row">
+        <label for="ppsn" class="col-md-2 col-form-label text-md-right">Public Services Card No:</label>
+        <div class="col-md-10">
+            <input type="text" name="ppsn" id="ppsn" class="form-control">
+        </div>
+    </div>
+
     <div class="form-group row">
         <label for="bloodType" class="col-md-2 col-form-label text-md-right">Blood Type:</label>
         <div class="col-md-10">
-            <!-- <input type="text" name="dob" id="dob" class="form-control" placeholder="dd/mm/YYYY"> -->
-            <select name="bloodType" id="bloodType" class="form-control">
-                <option value="oMinus">O-</option>
-                <option value="oPlus">O+</option>
-                <option value="aMinus">A-</option>
-                <option value="aPlus">A+</option>
-                <option value="bMinus">B-</option>
-                <option value="bPlus">B+</option>
-                <option value="abMinus">AB-</option>
-                <option value="abPlus">AB+</option>
-            </select>
+                <input type="text" name="bloodType" id="bloodType" class="form-control">
         </div>
     </div>
 
@@ -143,7 +162,7 @@
         <div class="col-md-10">
             <input type="postcode" name="postcode" id="postcode" class="form-control">
             <small class="text-muted">
-                For Irish users, you can find your Eircode <a href="http://eircode.ie">here</a>.
+                For Irish users, you can find your Eircode <a target="_blank" href="http://eircode.ie">here</a>.
             </small>
         </div>
     </div>

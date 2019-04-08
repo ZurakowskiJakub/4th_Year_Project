@@ -8,13 +8,9 @@
             delimiter: '/',
             datePattern: ['d', 'm', 'Y']
         });
-        new Cleave('#time', {
-            time: true,
-            timePattern: ['h', 'm']
-        });
         
         // ON SUBMIT
-        var form = "#addDoctorVisitForm";
+        var form = "#addDentistVisitForm";
 
         $(form).submit( function () {
             $(form+" :input").each( function () {
@@ -30,28 +26,16 @@
                 $(this)[0].value = encrypt($(this)[0].value, window.localStorage.getItem('MediSecEncKey'));
             });
 
-            // if(hashed_value === null){
-            //     $("#registerForm :input").each( function () {
-            //         $(this).attr('readonly', false);
-            //     });
-            //     return false;
-            // }
-
-            // $("#password")[0].value = hashed_value;
             return true;
         });
-
-        {% if error_message %}
-            createUserMessage("{{error_message}}", 5);
-        {% endif %}
     });
 </script>
 {% endblock customJS %}
 
 {% block content %}
-<h1>Add a Doctor Visit</h1>
+<h1>Add a Dentist Visit <span class="fas fa-tooth"></span></h1>
 
-<form id="addDoctorVisitForm" action="{{url_for('addMedicalHistoryForm', historyType='DoctorVisit')}}" method="post">
+<form id="addDentistVisitForm" action="{{url_for('addMedicalHistoryForm', historyType='DentistVisit')}}" method="post">
     <div class="form-group row" class="col-md-2 col-form-label">
         <label for="doctor" class="col-md-2 col-form-label text-md-right required">Doctor:</label>
         <div class="col-md-10">
@@ -66,24 +50,31 @@
         </div>
     </div>
 
-    <div class="form-group row">
-        <label for="desc" class="col-md-2 col-form-label text-md-right required">Description:</label>
+    <div class="form-group row" class="col-md-2 col-form-label">
+        <label for="visit_type" class="col-md-2 col-form-label text-md-right required">Type of visit:</label>
         <div class="col-md-10">
-            <textarea type="text" name="desc" id="desc" class="form-control" required></textarea>
-        </div>
-    </div>
-    
-    <div class="form-group row">
-        <label for="date" class="col-md-2 col-form-label text-md-right required">Date:</label>
-        <div class="col-md-10">
-            <input type="text" name="date" id="date" class="form-control" placeholder="dd/mm/YYYY" required>
+            <input type="text" name="visit_type" id="visit_type" class="form-control" placeholder="eg. Teeth cleaning" required>
         </div>
     </div>
 
     <div class="form-group row">
-        <label for="time" class="col-md-2 col-form-label text-md-right">Time:</label>
+        <label for="teeth_done" class="col-md-2 col-form-label text-md-right">Teeth done:</label>
         <div class="col-md-10">
-            <input type="text" name="time" id="time" class="form-control" placeholder="hh:mm">
+            <input type="text" name="teeth_done" id="teeth_done" class="form-control" placeholder="eg. Wisdom Tooth">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="desc" class="col-md-2 col-form-label text-md-right">Description:</label>
+        <div class="col-md-10">
+            <textarea type="text" name="desc" id="desc" class="form-control"></textarea>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="date" class="col-md-2 col-form-label text-md-right required">Date:</label>
+        <div class="col-md-10">
+            <input type="text" name="date" id="date" class="form-control" placeholder="dd/mm/YYYY" required>
         </div>
     </div>
 

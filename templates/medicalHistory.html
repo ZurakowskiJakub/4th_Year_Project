@@ -73,6 +73,36 @@
         </div>
     </div>
 
+    <div class="form-group row">
+        <label class="col-md-2 col-form-label text-md-right">Print:</label>
+        <div class="col-md">
+            <a class="mb-1 btn btn-outline-primary" onclick="print()">Print</a>
+        </div>
+    </div>
+
+    {% if account %}
+        <div class="print-only">
+            <h1>Personal Information: </h1>
+            {% for key, value in account.items() %}
+                {% if key == 'forename' %}<h2>Name: {{printDecrypted(value)}}</h2>{% endif %}
+                {% if key == 'surname' %}<h2>Surname: {{printDecrypted(value)}}</h2>{% endif %}
+                {% if key == 'dob' %}<h3>Date of Birth: {{printDecrypted(value)}}</h3>{% endif %}
+                {% if key == 'ppsn' %}<h3>Public Services Card Number: {{printDecrypted(value)}}</h3>{% endif %}
+                {% if key == 'bloodType' %}<p><b>Blood Type:</b> {{printDecrypted(value)}}</p>{% endif %}
+                {% if key == 'height' %}<p><b>Height (cm):</b> {{printDecrypted(value)}}</p>{% endif %}
+                {% if key == 'mobile' %}<p><b>Mobile Number:</b> {{printDecrypted(value)}}</p>{% endif %}
+                {% if key == 'landline' %} <p><b>Landline Number:</b> {{printDecrypted(value)}}</p> {% endif %}
+                {% if key == 'address1' %} <p><b>Address 1:</b> {{printDecrypted(value)}}</p> {% endif %}
+                {% if key == 'address2' %}<p><b>Address 2:</b> {{printDecrypted(value)}}</p>{% endif %}
+                {% if key == 'address3' %}<p><b>Address 3:</b> {{printDecrypted(value)}}</p>{% endif %}
+                {% if key == 'town' %}<p><b>City / Town:</b> {{printDecrypted(value)}}</p>{% endif %}
+                {% if key == 'region' %}<p><b>County / Region:</b> {{printDecrypted(value)}}</p>{% endif %}
+                {% if key == 'postcode' %}<p><b>Eircode / Postcode:</b> {{printDecrypted(value)}}</p>{% endif %}
+                {% if key == 'country' %}<p><b>Country:</b> {{printDecrypted(value)}}</p>{% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+
     <small class="text-muted">
         Click on the blue headings to see more details.
     </small>
@@ -84,10 +114,13 @@
             {% if history_item['type'] == "DoctorVisit" %}
                 <div class="card-header bg-primary clearfix" data-toggle="collapse" data-target="#card-contents-{{loop.index}}">
                     <span class="fas fa-syringe h2 mr-2"></span>
-                    <span><b>Doctor / GP Visit</b> to <b>{{printDecrypted(history_item['doctor'])}}</b></span>
+                    <span><b>Doctor Visit</b> to <b>{{printDecrypted(history_item['doctor'])}}</b></span>
                 </div>
                 <span class="collapse" id="card-contents-{{loop.index}}">
                     <div class="card-header bg-secondary"><b>Date:</b> {{printDecrypted(history_item['date'])}}</div>
+                    <div class="card-header bg-secondary">
+                        <b>Location:</b> {{printDecrypted(history_item['location'])}}
+                    </div>
                     {% if history_item['time'] %}
                         <div class="card-header bg-secondary"><b>Time:</b> {{printDecrypted(history_item['time'])}}</div>
                     {% endif %}
@@ -104,7 +137,7 @@
             
             {% if history_item['type'] == "HospitalVisit" %}
                 <div class="card-header bg-primary" data-toggle="collapse" data-target="#card-contents-{{loop.index}}">
-                    <span class="fas fa-hospital h2 mr-2"></span>
+                    <span class="fas fa-procedures h2 mr-2"></span>
                     <span><b>Hospital Visit</b> to <b>{{printDecrypted(history_item['hospital'])}}</b></span>
                 </div>
                 <span class="collapse" id="card-contents-{{loop.index}}">
@@ -200,6 +233,66 @@
                     </div>
                     <div class="card-header bg-secondary">
                         <b>Symptoms:</b> {{printDecrypted(history_item['symptoms'])}}
+                    </div>
+                    {% if history_item['desc'] %}
+                    <div class="card-body">
+                        <p class="card-text text-justify">{{printDecrypted(history_item['desc'])}}</p>
+                    </div>
+                    {% endif %}
+                    <div class="card-footer text-right">
+                        <a href="{{url_for('removeMedicalHistoryItem', item_id=history_item['_id'])}}" class="text-reset">
+                            Delete <span class="fas fa-trash-alt h4"></span>
+                        </a>
+                    </div>
+                </span>
+            {% endif %}
+
+            {% if history_item['type'] == "DentistVisit" %}
+                <div class="card-header bg-primary" data-toggle="collapse" data-target="#card-contents-{{loop.index}}">
+                    <span class="fas fa-tooth h2 mr-2"></span>
+                    <span><b>Dentist Visit</b> to <b>{{printDecrypted(history_item['doctor'])}}</b></span>
+                </div>
+                <span class="collapse" id="card-contents-{{loop.index}}">
+                    <div class="card-header bg-secondary">
+                        <b>Location:</b> {{printDecrypted(history_item['location'])}}
+                    </div>
+                    <div class="card-header bg-secondary">
+                        <b>Date:</b> {{printDecrypted(history_item['date'])}}
+                    </div>
+                    <div class="card-header bg-secondary">
+                        <b>Date:</b> {{printDecrypted(history_item['visit_type'])}}
+                    </div>
+                    {% if history_item['desc'] %}
+                    <div class="card-body">
+                        <p class="card-text text-justify">{{printDecrypted(history_item['desc'])}}</p>
+                    </div>
+                    {% endif %}
+                    <div class="card-footer text-right">
+                        <a href="{{url_for('removeMedicalHistoryItem', item_id=history_item['_id'])}}" class="text-reset">
+                            Delete <span class="fas fa-trash-alt h4"></span>
+                        </a>
+                    </div>
+                </span>
+            {% endif %}
+
+            {% if history_item['type'] == "Other" %}
+                <div class="card-header bg-primary" data-toggle="collapse" data-target="#card-contents-{{loop.index}}">
+                    <span class="fas fa-question-circle h2 mr-2"></span>
+                    <span><b>{{printDecrypted(history_item['label'])}}</b></span>
+                </div>
+                <span class="collapse" id="card-contents-{{loop.index}}">
+                    {% if history_item['doctor'] %}
+                    <div class="card-header bg-secondary">
+                        <b>Doctor:</b> {{printDecrypted(history_item['doctor'])}}
+                    </div>
+                    {% endif %}
+                    {% if history_item['location'] %}
+                    <div class="card-header bg-secondary">
+                        <b>Location:</b> {{printDecrypted(history_item['location'])}}
+                    </div>
+                    {% endif %}
+                    <div class="card-header bg-secondary">
+                        <b>Date:</b> {{printDecrypted(history_item['date'])}} {% if history_item['time'] %}at {{printDecrypted(history_item['time'])}}{% endif %}
                     </div>
                     {% if history_item['desc'] %}
                     <div class="card-body">

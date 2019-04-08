@@ -14,7 +14,7 @@
         });
         
         // ON SUBMIT
-        var form = "#addDoctorVisitForm";
+        var form = "#addOtherForm";
 
         $(form).submit( function () {
             $(form+" :input").each( function () {
@@ -30,49 +30,44 @@
                 $(this)[0].value = encrypt($(this)[0].value, window.localStorage.getItem('MediSecEncKey'));
             });
 
-            // if(hashed_value === null){
-            //     $("#registerForm :input").each( function () {
-            //         $(this).attr('readonly', false);
-            //     });
-            //     return false;
-            // }
-
-            // $("#password")[0].value = hashed_value;
             return true;
         });
-
-        {% if error_message %}
-            createUserMessage("{{error_message}}", 5);
-        {% endif %}
     });
 </script>
 {% endblock customJS %}
 
 {% block content %}
-<h1>Add a Doctor Visit</h1>
+<h1>Add Other / Unlisted <span class="fas fa-question-circle"></span></h1>
 
-<form id="addDoctorVisitForm" action="{{url_for('addMedicalHistoryForm', historyType='DoctorVisit')}}" method="post">
+<form id="addOtherForm" action="{{url_for('addMedicalHistoryForm', historyType='Other')}}" method="post">
     <div class="form-group row" class="col-md-2 col-form-label">
-        <label for="doctor" class="col-md-2 col-form-label text-md-right required">Doctor:</label>
+        <label for="label" class="col-md-2 col-form-label text-md-right required">Name:</label>
         <div class="col-md-10">
-            <input type="text" name="doctor" id="doctor" class="form-control" required>
+            <input type="text" name="label" id="label" class="form-control" required>
         </div>
     </div>
 
     <div class="form-group row" class="col-md-2 col-form-label">
-        <label for="location" class="col-md-2 col-form-label text-md-right required">Location:</label>
+        <label for="doctor" class="col-md-2 col-form-label text-md-right">Doctor:</label>
         <div class="col-md-10">
-            <input type="text" name="location" id="location" class="form-control" required>
+            <input type="text" name="doctor" id="doctor" class="form-control">
+        </div>
+    </div>
+
+    <div class="form-group row" class="col-md-2 col-form-label">
+        <label for="location" class="col-md-2 col-form-label text-md-right">Location:</label>
+        <div class="col-md-10">
+            <input type="text" name="location" id="location" class="form-control">
         </div>
     </div>
 
     <div class="form-group row">
-        <label for="desc" class="col-md-2 col-form-label text-md-right required">Description:</label>
+        <label for="desc" class="col-md-2 col-form-label text-md-right">Description:</label>
         <div class="col-md-10">
-            <textarea type="text" name="desc" id="desc" class="form-control" required></textarea>
+            <textarea type="text" name="desc" id="desc" class="form-control"></textarea>
         </div>
     </div>
-    
+
     <div class="form-group row">
         <label for="date" class="col-md-2 col-form-label text-md-right required">Date:</label>
         <div class="col-md-10">

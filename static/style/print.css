@@ -1,0 +1,46 @@
+nav{
+    display: none;
+}
+footer{
+    display: none;
+}
+.collapse{
+    display: block !important;
+}
+.bg-primary{
+    background-color: #cccccc !important;
+}
+.bg-secondary{
+    background-color: #ffffff !important;
+}
+.card-footer{
+    display: none;
+}
+.card{
+    page-break-inside: avoid;
+}
+small{
+    display: none;
+}
+
+
+
+
+.fa-tooth{
+    color: #CCCCCC !important;
+}
+.fa-procedures{
+    color: #FF5050 !important;
+}
+.fa-syringe{
+    color: #a5f9ff !important;
+}
+.fa-user{
+    color: #299617 !important;
+}
+.fa-question-circle{
+    color: #b15eed !important;
+}
+.fa-pills{
+    color: #FF5050 !important;
+}

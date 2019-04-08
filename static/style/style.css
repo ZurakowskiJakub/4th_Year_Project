@@ -26,22 +26,25 @@
 .bg-readable{
     background-color: #eeeeee !important;
 }
+.print-only{
+    display: none !important;
+}
 
 
 .fa-tooth{
     color: #CCCCCC !important;
 }
-.fa-hospital{
-    color: #222222 !important;
+.fa-procedures{
+    color: #FF5050 !important;
 }
 .fa-syringe{
-    color: #02bbf2 !important;
+    color: #a5f9ff !important;
 }
 .fa-user{
     color: #299617 !important;
 }
 .fa-question-circle{
-    color: #02A4D3 !important;
+    color: #b15eed !important;
 }
 .fa-pills{
     color: #FF5050 !important;

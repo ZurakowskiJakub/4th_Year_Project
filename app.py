@@ -12,7 +12,7 @@ from flask_pymongo import PyMongo
 from datetime import datetime
 from datetime import timedelta
 
-from util import token
+# from util import token
 
 import hashlib
 
@@ -338,6 +338,10 @@ def medicalHistory():
         mongo = getUserAccount(session['auth'])
         token = mongo.get('token')
         if mongo.get('history'):
+            if mongo.get('account'):
+                account = mongo['account']
+            else:
+                account = None
             medical_history = mongo.get('history')
             medical_history.reverse()
             category = None
@@ -356,6 +360,7 @@ def medicalHistory():
                 medical_history = medical_history[:10]
             return render_template('medicalHistory.html',
                                    history=medical_history,
+                                   account=account,
                                    sort=sort,
                                    cat=category,
                                    lim=res_lim,
@@ -432,7 +437,7 @@ def addMedicalHistoryForm(historyType):
             
             for input_box in request.form:
                 document[input_box] = request.form[input_box]
-            mongo.db.Users.update({'email': session['auth']}, {
+            updateUserAccount(session['auth'], {
                 '$push': {
                     'history': document
                 }
@@ -472,10 +477,26 @@ def removeMedicalHistoryItem(item_id):
 def account():
     if checkUserAuth():
         if request.method == 'POST':
-            pass
-        
+            document = {"account": {}}
+            for u_input in request.form:
+                document['account'][u_input] = request.form[u_input]
+            if not updateUserAccount(session['auth'], {
+                "$set": document
+            }):
+                flash("Error updating account information. Please try again.",
+                      category="error")
+                return redirect(url_for('account'))
+            flash("Account details updated sucessfully.",
+                  category="info")
+            return redirect(url_for('account'))
         else:
-            return render_template('account.html')
+            document = getUserAccount(session['auth'])
+            if not document.get('account'):
+                document = None
+            else:
+                document = document['account']
+            return render_template('account.html',
+                                   account_details=document)
 
     else:
         abort(401)

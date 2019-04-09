@@ -41,7 +41,6 @@
             });
             return true;
         });
-
     });
 </script>
 {% endblock customJS %}
@@ -56,7 +55,7 @@
 
 {% block content %}
 
-<h1>Add a Prescription</h1>
+<h1>Add a Prescription <span class="fas fa-pills"></span></h1>
 
 <form id="addPrescriptionForm" action="{{url_for('addMedicalHistoryForm', historyType='Prescription')}}" method="post">
     <div class="form-group row">
@@ -115,28 +114,28 @@
     <div class="form-group row">
         <label for="item_name" class="col-md-2 col-form-label text-md-right required">Item Name:</label>
         <div class="col-md-10">
-            <input type="text" name="item_name_1" id="item_name_1" class="form-control" placeholder="eg. zopiclone" required>
+            <input type="text" name="item_name_1" id="item_name_1" class="form-control" placeholder="eg. zopiclone">
         </div>
     </div>
 
     <div class="form-group row">
         <label for="item_strength" class="col-md-2 col-form-label text-md-right required">Item Strength:</label>
         <div class="col-md-10">
-            <input type="text" name="item_strength_1" id="item_strength_1" class="form-control" placeholder="eg. 7.5mg" required>
+            <input type="text" name="item_strength_1" id="item_strength_1" class="form-control" placeholder="eg. 7.5mg">
         </div>
     </div>
 
     <div class="form-group row">
         <label for="item_instructions" class="col-md-2 col-form-label text-md-right required">Item Instructions:</label>
         <div class="col-md-10">
-            <input type="text" name="item_instructions_1" id="item_insturctions_1" class="form-control" placeholder="eg. 1 at night" required>
+            <input type="text" name="item_instructions_1" id="item_insturctions_1" class="form-control" placeholder="eg. 1 at night">
         </div>
     </div>
 
     <div class="form-group row">
         <label for="item_number" class="col-md-2 col-form-label text-md-right required">Number of Items:</label>
         <div class="col-md-10">
-            <input type="text" name="item_number_1" id="item_number_1" class="form-control" placeholder="eg. 14" required>
+            <input type="text" name="item_number_1" id="item_number_1" class="form-control" placeholder="eg. 14">
         </div>
     </div>
     </div>
@@ -148,28 +147,28 @@
     <div class="form-group row">
         <label for="item_name" class="col-md-2 col-form-label text-md-right required">Item Name:</label>
         <div class="col-md-10">
-            <input type="text" name="item_name_2" id="item_name_2" class="form-control" placeholder="eg. zopiclone" required>
+            <input type="text" name="item_name_2" id="item_name_2" class="form-control" placeholder="eg. zopiclone">
         </div>
     </div>
 
     <div class="form-group row">
         <label for="item_strength" class="col-md-2 col-form-label text-md-right required">Item Strength:</label>
         <div class="col-md-10">
-            <input type="text" name="item_strength_2" id="item_strength_2" class="form-control" placeholder="eg. 7.5mg" required>
+            <input type="text" name="item_strength_2" id="item_strength_2" class="form-control" placeholder="eg. 7.5mg">
         </div>
     </div>
 
     <div class="form-group row">
         <label for="item_instructions" class="col-md-2 col-form-label text-md-right required">Item Instructions:</label>
         <div class="col-md-10">
-            <input type="text" name="item_instructions_2" id="item_insturctions_2" class="form-control" placeholder="eg. 1 at night" required>
+            <input type="text" name="item_instructions_2" id="item_insturctions_2" class="form-control" placeholder="eg. 1 at night">
         </div>
     </div>
 
     <div class="form-group row">
         <label for="item_number" class="col-md-2 col-form-label text-md-right required">Number of Items:</label>
         <div class="col-md-10">
-            <input type="text" name="item_number_2" id="item_number_2" class="form-control" placeholder="eg. 14" required>
+            <input type="text" name="item_number_2" id="item_number_2" class="form-control" placeholder="eg. 14">
         </div>
     </div>
     </div>
@@ -181,28 +180,28 @@
     <div class="form-group row">
         <label for="item_name" class="col-md-2 col-form-label text-md-right required">Item Name:</label>
         <div class="col-md-10">
-            <input type="text" name="item_name_3" id="item_name_3" class="form-control" placeholder="eg. zopiclone" required>
+            <input type="text" name="item_name_3" id="item_name_3" class="form-control" placeholder="eg. zopiclone">
         </div>
     </div>
 
     <div class="form-group row">
         <label for="item_strength" class="col-md-2 col-form-label text-md-right required">Item Strength:</label>
         <div class="col-md-10">
-            <input type="text" name="item_strength_3" id="item_strength_3" class="form-control" placeholder="eg. 7.5mg" required>
+            <input type="text" name="item_strength_3" id="item_strength_3" class="form-control" placeholder="eg. 7.5mg">
         </div>
     </div>
 
     <div class="form-group row">
         <label for="item_instructions" class="col-md-2 col-form-label text-md-right required">Item Instructions:</label>
         <div class="col-md-10">
-            <input type="text" name="item_instructions_3" id="item_insturctions_3" class="form-control" placeholder="eg. 1 at night" required>
+            <input type="text" name="item_instructions_3" id="item_insturctions_3" class="form-control" placeholder="eg. 1 at night">
         </div>
     </div>
 
     <div class="form-group row">
         <label for="item_number" class="col-md-2 col-form-label text-md-right required">Number of Items:</label>
         <div class="col-md-10">
-            <input type="text" name="item_number_3" id="item_number_3" class="form-control" placeholder="eg. 14" required>
+            <input type="text" name="item_number_3" id="item_number_3" class="form-control" placeholder="eg. 14">
         </div>
     </div>
     </div>

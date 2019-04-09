@@ -37,7 +37,7 @@
 {% endblock customJS %}
 
 {% block content %}
-<h1>Add a Doctor Visit</h1>
+<h1>Add a Doctor Visit <span class="fas fa-syringe"></span></h1>
 
 <form id="addDoctorVisitForm" action="{{url_for('addMedicalHistoryForm', historyType='DoctorVisit')}}" method="post">
     <div class="form-group row" class="col-md-2 col-form-label">

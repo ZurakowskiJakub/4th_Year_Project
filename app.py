@@ -20,11 +20,6 @@ import hashlib
 import random
 
 app = Flask(__name__)
-# app.secret_key = "st7x87F+9_!XyYmjr$zm8k9YdrpFDLf*
-#                   XZYrDy@YDaaF5pvk6W+!s8LF%v=BXdZw"
-
-# DBNAME = "MediSec"
-# app.config['MONGO_URI'] = f"mongodb://localhost:27017/{DBNAME}"
 
 # IMPORTANT, NOT in version control.
 app.config.from_json("config.json")
@@ -57,31 +52,6 @@ for collection in collections:
 def index():
     """Returns the index.html template"""
     return render_template("index.html")
-
-
-@app.route('/encrypt')
-def encrypt():
-    return render_template("encrypt.html")
-
-
-@app.route('/decrypt')
-def decrypt():
-    """Returns all documents in a collection to decrypt.html"""
-    data = mongo.db.Users.find({})
-
-    return render_template("decrypt.html",
-                           data=data)
-
-
-@app.route('/save', methods=['POST'])
-def save():
-    """Saves the given encrypted_input_res to the database"""
-    wrapper = {}
-    for data_label, data_item in request.form.items():
-        wrapper[data_label] = data_item
-    mongo.db.Users.insert_one(wrapper)
-
-    return redirect(url_for('encrypt'))
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -240,31 +210,6 @@ def login():
         return render_template('login.html')
 
 
-@app.route('/validate_login', methods=['POST'])
-def validate_login():
-    """POST: Validates the password and logs the user in.
-    """
-    email_address = session['login_email_address']
-    password = request.form['password_hash']
-    document = getUserAccount(email_address)
-    if document['password']['hash'] == password:
-        # Correct Password
-        session['auth'] = email_address
-        return redirect(url_for('encryptionKey'))
-    else:
-        # Wrong Password
-        if not session.get('login_attempts'):
-            session['login_attempts'] = 1
-        elif session.get('login_attempts') == 3:
-            # Lockout
-            pass
-        elif session.get('login_attempts') >= 1:
-            session['login_attempts'] += 1
-        return render_template('login_username.html',
-                               error_message="Incorrect password, \
-                                   please try again.")
-
-
 @app.route('/validateEmail/<user_token>', methods=['GET'])
 def validateEmail(user_token):
     # IF LOGGED IN, REDIRECT TO HOME
@@ -307,27 +252,6 @@ def resendValidationEmail():
         return redirect(url_for('login'))
     else:
         return render_template('resendValidationEmail.html')
-
-
-@app.route('/encryptionKey', methods=['GET'])
-def encryptionKey():
-    if checkUserAuth():
-        document = getUserAccount(session['auth'])
-        if document.get('hasKey'):
-            return redirect(url_for('medicalHistory'))
-        else:
-            # Doesn't have encryption key
-            try:
-                mongo.db.Users.update({"email": session['auth']}, {
-                    "$set": {
-                        "hasKey": True
-                    }
-                })
-            except IOError:
-                return redirect(url_for('encryptionKey'), 500)
-            return render_template('encryptionKey.html')
-    else:
-        abort(401)
 
 
 @app.route('/medicalHistory', methods=['GET'])

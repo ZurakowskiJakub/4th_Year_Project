@@ -1,6 +1,6 @@
 {% extends 'index.html' %}
-{% block content %}
 
+{% block customJS %}
 <script>
     window.setInterval(redirectToLogin, 5000);
     window.setInterval(updateSeconds, 1000);
@@ -13,12 +13,15 @@
         if(secods >= 0){
             --seconds;
         }
-        $('#seconds').html(seconds);
+        $('#seconds')[0].innerText = seconds;
     }
 </script>
+{% endblock customJS %}
 
-<h1>Error 409 - Conflict</h1>
-<p>There has been a conflict with your query. Most likely the server received more than one result where one was expected.</p>
+{% block content %}
+
+<h1>Error 500 - Internal Server Error</h1>
+<p>Ups, there's been an issue with the server. You'll be taken to the <a href="{{url_for('index')}}">home page</a> shortly.</p>
 <p>You will be taken <a href="{{url_for('index')}}">home</a> in <span id="seconds">5</span> seconds.</p>
 
 {% endblock content %}

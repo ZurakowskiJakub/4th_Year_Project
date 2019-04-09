@@ -7,7 +7,7 @@
     var seconds = 5;
 
     function redirectToLogin() {
-        window.location.replace("{{url_for('login')}}");
+        window.location.replace("{{url_for('index')}}");
     }
     function updateSeconds() {
         if(seconds >= 0){
@@ -20,8 +20,8 @@
 
 {% block content %}
 
-<h1>Error 401 - Unauthorised Access</h1>
-<p>You probably aren't logged in. Head over to <a href="{{url_for('login')}}">login page</a> to login.</p>
+<h1>Error 404 - Page not Found</h1>
+<p>The page you're looking for isn't here. You'll be now taken to the <a href="{{url_for('index')}}">home page</a>.</p>
 <p>You should be taken there automatically in <span id="seconds">5</span> seconds, if not, follow the link above.</p>
 
 {% endblock content %}

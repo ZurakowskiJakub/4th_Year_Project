@@ -458,10 +458,9 @@ def fileNotFound(error):
     pass
 
 
-# TODO Make it 500
-@app.errorhandler(409)
+@app.errorhandler(500)
 def conflictingRequest(error):
-    return render_template('error/409.html'), 409
+    return render_template('error/500.html'), 500
 
 
 def getUserAccount(email_address: str):
@@ -473,8 +472,6 @@ def getUserAccount(email_address: str):
     if document.count() == 0:
         return False
     elif document.count() > 1:
-        # Make it 500
-        # abort(409)
         return False
     else:
         return document[0]

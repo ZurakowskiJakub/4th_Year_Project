@@ -8,6 +8,13 @@ $(function () {
             $('footer').css('margin-top', (contentHeight - footerTop - 8) + 'px');
         }
     } footer_on_bottom();
+
+    // LOGOUT LOGIC
+    $("#logOutButton").click(function (e) { 
+        e.preventDefault();
+        window.localStorage.clear();
+        window.location.replace("/logout");
+    });
 })
 
 function checkPasswordPolicy(password) {

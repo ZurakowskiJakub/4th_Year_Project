@@ -39,21 +39,9 @@
             $(form+" :input").not($(form+" input[type=submit]")).each( function () {
                 $(this)[0].value = encrypt($(this)[0].value, window.localStorage.getItem('MediSecEncKey'));
             });
-
-            // if(hashed_value === null){
-            //     $("#registerForm :input").each( function () {
-            //         $(this).attr('readonly', false);
-            //     });
-            //     return false;
-            // }
-
-            // $("#password")[0].value = hashed_value;
             return true;
         });
 
-        {% if error_message %}
-            createUserMessage("{{error_message}}", 5);
-        {% endif %}
     });
 </script>
 {% endblock customJS %}

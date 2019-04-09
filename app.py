@@ -48,7 +48,7 @@ for collection in collections:
         print_sys_msg(f"{collection} collection in the Database. OK.")
 
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def index():
     """Returns the index.html template"""
     return render_template("index.html")
@@ -70,9 +70,8 @@ def register():
 
         # CHECK IF EMAIL ALREADY TAKEN
         if getUserAccount(email_address):
-            return render_template('register.html',
-                                   error_message="Sorry, that username is \
-                                                 already taken.")
+            flash("Sorry, that username is already taken.", category="error")
+            return render_template('register.html')
 
         # GENERATE SALT AND HASH
         now = str(datetime.now())
@@ -106,9 +105,9 @@ def register():
         try:
             mongo.db.Users.insert_one(document)
         except IOError:
-            return render_template('register.html',
-                                   error_message="There was an issue saving \
-                                                 your data. Please try again.")
+            flash("There was an issue saving your data. Please try again.",
+                  category="error")
+            return render_template('register.html')
         verification_token = token.generateToken(email_address)
         email.sendVerificationEmail(email_address, verification_token)
         return redirect(url_for('login'))
@@ -290,8 +289,6 @@ def medicalHistory():
         else:
             return render_template('medicalHistory.html')
     else:
-        # Give 401, forbidden access
-        # return redirect('/login', 403)
         abort(401)
 
 
@@ -320,13 +317,15 @@ def addMedicalHistory():
                     }},
                 )
             except IOError:
+                flash("There was an issue adding your item. Please try again.",
+                      category="error")
                 return redirect(url_for('addMedicalHistory'), 500)
 
-            return render_template('addMedicalHistory.html',
-                                   info_msg="Item added sucesfully.")
+            flash("Item added sucesfully.", category="info")
+            return render_template('addMedicalHistory.html')
 
         else:
-            abort(401)
+            abort(500)
     else:
         abort(401)
 
@@ -367,7 +366,7 @@ def addMedicalHistoryForm(historyType):
             return redirect(url_for('medicalHistory'))
 
         else:
-            abort(401)
+            abort(500)
     else:
         abort(401)
 

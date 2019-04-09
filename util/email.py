@@ -18,7 +18,7 @@ def sendVerificationEmail(recipient: str, token: str) -> bool:
     You have sucesfully registered with MediSec.
     Please click the link below to verify your email.
     You won't be able to log-in unless you do this.
-    http://{app.config['EXTERNAL_HOST']}{url_for('validateEmail', user_token=token)}
+    http://{main.app.config['EXTERNAL_HOST']}{url_for('validateEmail', user_token=token)}
     """)
     msg['Subject'] = "MediSec"
     msg['From'] = FROM

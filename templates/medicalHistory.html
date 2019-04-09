@@ -9,13 +9,6 @@
 {% block customJS %}
 <script>
     $(function () {
-        {% if error_message %}
-            createUserMessage("{{error_message}}", 5);
-        {% endif %}
-        {% if info_message %}
-            createUserMessage("{{info_message}}", 5, "info");
-        {% endif %}
-
         // SEARCH
         $("#search").on("keyup", function() {
             var value = $(this).val().toLowerCase();

@@ -35,54 +35,57 @@
     }
 </script>
 
-<h1>View Medical History</h1>
+<h1>Medical History</h1>
 
 {% if history or cat or sort %}
 
-    <div class="form-group row">
-        <label class="col-md-2 col-form-label text-md-right">Sort:</label>
-        <div class="col-md">
-            <a href="{{url_for('medicalHistory', cat=cat, sort='dateDsc', lim=lim)}}" class="btn btn-outline-primary {%if sort == 'dateDsc'%}active{%endif%}">Date Created Dsc.</a>
-            <a href="{{url_for('medicalHistory', cat=cat, sort='dateAsc', lim=lim)}}" class="btn btn-outline-primary {%if sort == 'dateAsc'%}active{%endif%}">Date Created Asc.</a>
-        </div>
+    <button id="controlsButton" class="btn btn-primary" data-toggle="collapse" data-target="#controls">Sort & Filter</button>
 
-        <label for="search" class="col-md-1 col-form-label text-md-right">Search:</label>
-        <div class="col-md-2">
-            <input type="search" name="search" id="search" class="form-control" placeholder="Search...">
+    <div id="controls" class="collapse">
+        <div class="form-group row">
+            <label class="col-md-2 col-form-label text-md-right">Sort:</label>
+            <div class="col-md">
+                <a href="{{url_for('medicalHistory', cat=cat, sort='dateDsc', lim=lim)}}" class="btn btn-outline-primary {%if sort == 'dateDsc'%}active{%endif%}">Date Created Dsc.</a>
+                <a href="{{url_for('medicalHistory', cat=cat, sort='dateAsc', lim=lim)}}" class="btn btn-outline-primary {%if sort == 'dateAsc'%}active{%endif%}">Date Created Asc.</a>
+            </div>
+    
+            <label for="search" class="col-md-1 col-form-label text-md-right">Search:</label>
+            <div class="col-md-2">
+                <input type="search" name="search" id="search" class="form-control" placeholder="Search...">
+            </div>
         </div>
-    </div>
-
-    <div class="form-group row">
-        <label class="col-md-2 col-form-label text-md-right">Show Category:</label>
-        <div class="col-md">
-            <a href="{{url_for('medicalHistory', cat='', sort=sort, lim=lim)}}" class="mb-1 btn btn-outline-primary {%if cat == None%}active{%endif%}">All</a>
-            <a href="{{url_for('medicalHistory', cat='DoctorVisit', sort=sort, lim=lim)}}" class="mb-1 btn btn-outline-primary {%if cat=='DoctorVisit'%}active{%endif%}">Doctor Visits</a>
-            <a href="{{url_for('medicalHistory', cat='HospitalVisit', sort=sort, lim=lim)}}" class="mb-1 btn btn-outline-primary {%if cat=='HospitalVisit'%}active{%endif%}">Hospital Visits</a>
-            <a href="{{url_for('medicalHistory', cat='Illness', sort=sort, lim=lim)}}" class="mb-1 btn btn-outline-primary {%if cat=='Illness'%}active{%endif%}">Illnesses</a>
-            <a href="{{url_for('medicalHistory', cat='Prescription', sort=sort, lim=lim)}}" class="mb-1 btn btn-outline-primary {%if cat=='Prescription'%}active{%endif%}">Prescriptions</a>
-            <a href="{{url_for('medicalHistory', cat='DentalVisit', sort=sort, lim=lim)}}" class="mb-1 btn btn-outline-primary {%if cat=='DentalVisit'%}active{%endif%}">Dental Visits</a>
-            <a href="{{url_for('medicalHistory', cat='Other', sort=sort, lim=lim)}}" class="mb-1 btn btn-outline-primary {%if cat=='Other'%}active{%endif%}">Other</a>
+    
+        <div class="form-group row">
+            <label class="col-md-2 col-form-label text-md-right">Show Category:</label>
+            <div class="col-md">
+                <a href="{{url_for('medicalHistory', cat='', sort=sort, lim=lim)}}" class="mb-1 btn btn-outline-primary {%if cat == None%}active{%endif%}">All</a>
+                <a href="{{url_for('medicalHistory', cat='DoctorVisit', sort=sort, lim=lim)}}" class="mb-1 btn btn-outline-primary {%if cat=='DoctorVisit'%}active{%endif%}">Doctor Visits</a>
+                <a href="{{url_for('medicalHistory', cat='HospitalVisit', sort=sort, lim=lim)}}" class="mb-1 btn btn-outline-primary {%if cat=='HospitalVisit'%}active{%endif%}">Hospital Visits</a>
+                <a href="{{url_for('medicalHistory', cat='Illness', sort=sort, lim=lim)}}" class="mb-1 btn btn-outline-primary {%if cat=='Illness'%}active{%endif%}">Illnesses</a>
+                <a href="{{url_for('medicalHistory', cat='Prescription', sort=sort, lim=lim)}}" class="mb-1 btn btn-outline-primary {%if cat=='Prescription'%}active{%endif%}">Prescriptions</a>
+                <a href="{{url_for('medicalHistory', cat='DentalVisit', sort=sort, lim=lim)}}" class="mb-1 btn btn-outline-primary {%if cat=='DentalVisit'%}active{%endif%}">Dental Visits</a>
+                <a href="{{url_for('medicalHistory', cat='Other', sort=sort, lim=lim)}}" class="mb-1 btn btn-outline-primary {%if cat=='Other'%}active{%endif%}">Other</a>
+            </div>
         </div>
-    </div>
-
-    <div class="form-group row">
-        <label class="col-md-2 col-form-label text-md-right">Limit Results:</label>
-        <div class="col-md">
-            <a href="{{url_for('medicalHistory', cat=cat, sort=sort, lim='10')}}" class="mb-1 btn btn-outline-primary {%if lim == '10'%}active{%endif%}">10</a>
-            <a href="{{url_for('medicalHistory', cat=cat, sort=sort, lim='all')}}" class="mb-1 btn btn-outline-primary {%if lim == 'all'%}active{%endif%}">All</a>
+    
+        <div class="form-group row">
+            <label class="col-md-2 col-form-label text-md-right">Limit Results:</label>
+            <div class="col-md">
+                <a href="{{url_for('medicalHistory', cat=cat, sort=sort, lim='10')}}" class="mb-1 btn btn-outline-primary {%if lim == '10'%}active{%endif%}">10</a>
+                <a href="{{url_for('medicalHistory', cat=cat, sort=sort, lim='all')}}" class="mb-1 btn btn-outline-primary {%if lim == 'all'%}active{%endif%}">All</a>
+            </div>
         </div>
-    </div>
-
-    <div class="form-group row">
-        <label class="col-md-2 col-form-label text-md-right">Print:</label>
-        <div class="col-md">
-            <a class="mb-1 btn btn-outline-primary" onclick="print()">Print</a>
+    
+        <div class="form-group row">
+            <label class="col-md-2 col-form-label text-md-right">Print:</label>
+            <div class="col-md">
+                <a class="mb-1 btn btn-outline-primary" onclick="print()">Print</a>
+            </div>
         </div>
     </div>
 
     {% if account %}
         <div class="print-only">
-            <h1>Personal Information: </h1>
             {% for key, value in account.items() %}
                 {% if key == 'forename' %}<h2>Name: {{printDecrypted(value)}}</h2>{% endif %}
                 {% if key == 'surname' %}<h2>Surname: {{printDecrypted(value)}}</h2>{% endif %}
@@ -102,7 +105,8 @@
             {% endfor %}
         </div>
     {% endif %}
-
+    
+    <br>
     <small class="text-muted">
         Click on the blue headings to see more details.
     </small>
@@ -224,7 +228,7 @@
 
             {% if history_item['type'] == "Illness" %}
                 <div class="card-header bg-primary" data-toggle="collapse" data-target="#card-contents-{{loop.index}}">
-                    <span class="fas fa-user h2 mr-2"></span>
+                    <span class="fas fa-frown h2 mr-2"></span>
                     <span><b>{{printDecrypted(history_item['illness'])}}</b></span>
                 </div>
                 <span class="collapse" id="card-contents-{{loop.index}}">

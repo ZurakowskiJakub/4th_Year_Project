@@ -22,12 +22,18 @@ footer{
 small{
     display: none;
 }
+#controls{
+    display: none !important;
+}
+#controlsButton{
+    display: none;
+}
 
 
 
 
 .fa-tooth{
-    color: #CCCCCC !important;
+    color: #ffffff !important;
 }
 .fa-procedures{
     color: #FF5050 !important;
@@ -35,12 +41,12 @@ small{
 .fa-syringe{
     color: #a5f9ff !important;
 }
-.fa-user{
-    color: #299617 !important;
+.fa-frown{
+    color: #47c433 !important;
 }
 .fa-question-circle{
-    color: #b15eed !important;
+    color: #222222 !important;
 }
 .fa-pills{
-    color: #FF5050 !important;
+    color: #e861af !important;
 }

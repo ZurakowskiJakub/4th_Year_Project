@@ -1,4 +1,4 @@
-from app import app
+import app as main
 
 from itsdangerous import URLSafeTimedSerializer
 
@@ -8,9 +8,9 @@ def generateToken(email_address: str):
     @param email_address the email address of the user\n
     @return str the token.
     """
-    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    serializer = URLSafeTimedSerializer(main.app.config['SECRET_KEY'])
     return serializer.dumps(email_address,
-                            salt=app.config['SECURITY_PASSWORD_SALT'])
+                            salt=main.app.config['SECURITY_PASSWORD_SALT'])
 
 
 def confirmToken(token: str, expiration=3600):
@@ -19,11 +19,11 @@ def confirmToken(token: str, expiration=3600):
     @param exiration=3600 the expiration duration for the token.
     @returns bool OR email_address of the confirming user.
     """
-    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    serializer = URLSafeTimedSerializer(main.app.config['SECRET_KEY'])
     try:
         email_address = serializer.loads(
             token,
-            salt=app.config['SECURITY_PASSWORD_SALT'],
+            salt=main.app.config['SECURITY_PASSWORD_SALT'],
             max_age=expiration
         )
     except Exception:

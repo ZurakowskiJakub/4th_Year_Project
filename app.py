@@ -12,14 +12,12 @@ from flask_pymongo import PyMongo
 from datetime import datetime
 from datetime import timedelta
 
-# from util import token
+from util import email
+from util import token
 
 import hashlib
 
 import random
-
-import email
-import smtplib
 
 app = Flask(__name__)
 # app.secret_key = "st7x87F+9_!XyYmjr$zm8k9YdrpFDLf*
@@ -142,7 +140,7 @@ def register():
                                    error_message="There was an issue saving \
                                                  your data. Please try again.")
         verification_token = token.generateToken(email_address)
-        sendVerificationEmail(email_address, verification_token)
+        email.sendVerificationEmail(email_address, verification_token)
         return redirect(url_for('login'))
 
     else:
@@ -225,7 +223,7 @@ def login():
                             "account_locked": True,
                             "account_locked_time": datetime.utcnow()
                         }
-                    }, LOCK_TEMPLATE):
+                    }):
                         return GEN_TEMPLATE
                 # INCREMENT LOGIN ATTEMPTS
                 else:
@@ -304,7 +302,7 @@ def resendValidationEmail():
                   category="error")
             return redirect(url_for('resendValidationEmail'))
         verification_token = token.generateToken(email_address)
-        sendVerificationEmail(email_address, verification_token)
+        email.sendVerificationEmail(email_address, verification_token)
         flash("Validation email sent!", category="info")
         return redirect(url_for('login'))
     else:
@@ -513,6 +511,19 @@ def logout():
         abort(401)
 
 
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    if request.method == 'GET':
+        return render_template('contact.html')
+
+    if request.method == 'POST':
+        email_address = request.form.get('email_address')
+        query = request.form.get('query')
+        email.sendContactEmail(email_address, query)
+        flash("Email sent sucessfully.", category="info")
+        return redirect(url_for('contact'))
+
+
 @app.errorhandler(401)
 def unauthorisedRequest(error):
     return render_template('error/401.html'), 401
@@ -530,6 +541,10 @@ def conflictingRequest(error):
 
 
 def getUserAccount(email_address: str):
+    """Finds and returns user account from DB
+    @param email_address the target email address
+    @return dict OR False
+    """
     document = mongo.db.Users.find({"email": email_address})
     if document.count() == 0:
         return False
@@ -555,18 +570,6 @@ def updateUserAccount(email_address: str, query: dict)->bool:
         return True
 
 
-def getUtilHistTypes():
-    document = mongo.db.Util.find({"hist_types"})
-    if document.count() == 0:
-        return False
-    elif document.count() > 1:
-        # Make it 500
-        # abort(409)
-        return False
-    else:
-        return document[0]
-
-
 def checkUserAuth() -> bool:
     """Checks if the user is authenticated already.
     """
@@ -579,40 +582,6 @@ def checkUserAuth() -> bool:
     elif not session.get('auth'):
         # User is not Authenticated
         return False
-
-
-def sendVerificationEmail(recipient: str, token: str) -> bool:
-    """Sends an email using the smtp connection
-    Returns true if sent, false if failed.
-    """
-    PASSWORD = app.config['EMAIL_PASSWORD']
-    FROM = app.config['EMAIL_USERNAME']
-    TO = recipient
-
-    msg = email.message_from_string(f"""
-    You have sucesfully registered with MediSec.
-    Please click the link below to verify your email.
-    You won't be able to log-in unless you do this.
-    <a href="http://{app.config['EXTERNAL_HOST']}{url_for('validateEmail', user_token=token)}">Click Here.</a>
-    """)
-    msg['Subject'] = "MediSec"
-    msg['From'] = FROM
-    msg['To'] = TO
-
-    try:
-        s = smtplib.SMTP("smtp.live.com", 587)
-        s.ehlo()
-        s.starttls()
-        s.ehlo()
-        s.login(FROM, PASSWORD)
-
-        s.sendmail(FROM, TO, msg.as_string())
-    except Exception as e:
-        print(e)
-        return False
-    finally:
-        s.quit()
-    return True
 
 
 if __name__ == "__main__":

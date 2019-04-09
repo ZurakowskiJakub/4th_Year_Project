@@ -43,6 +43,18 @@
             }
         });
 
+        // PASSWORD VIEW
+        $("#seePasswordButton").click(function (e) { 
+            e.preventDefault();
+            var field = $("#password");
+            if(field.attr("type") === "password"){
+                field.attr("type", "text");
+            }
+            else{
+                field.attr("type", "password");
+            }
+        });
+
         {% if error_message %}
             createUserMessage("{{error_message}}", 5);
         {% endif %}
@@ -52,6 +64,11 @@
 
 {% block content %}
 <h1>Register with MediSec</h1>
+
+<p class="text-danger">
+    <b class="text-uppercase">Note:</b> MediSec does <b>not</b> provide an option for users to recover their password. <br>
+    <b>It is important that you remember your password as failing to do so will result in your data being lost.</b>
+</p>
 
 <form id="registerForm" action="{{url_for('register')}}" method="post">
     <div class="form-group row">
@@ -64,7 +81,12 @@
     <div class="form-group row" class="col-md-2 col-form-label">
         <label for="password" class="col-md-2 col-form-label text-md-right required">Password:</label>
         <div class="col-md-10">
-            <input type="password" name="password" id="password" class="form-control" placeholder="aBcde1()" required>
+            <div class="input-group">
+                <input type="password" name="password" id="password" class="form-control" placeholder="aBcde1()" required>
+                <div class="input-group-append">
+                    <button id="seePasswordButton" class="btn btn-outline-primary"><span class="fas fa-eye"></span></button>
+                </div>
+            </div>
             <small class="form-text text-muted">
                 Your password must have:
                 <ul>

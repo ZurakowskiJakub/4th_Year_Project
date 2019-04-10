@@ -5,7 +5,7 @@
     $(function () {
         $("#loginForm").submit( function () {            
             var plaintext_password = $("#password")[0].value;
-            var email_address = $("#email_address")[0].value;
+            var email_address = $("#email_address")[0].value.toLowerCase();
 
             // Store hash of email and password
             window.localStorage['MediSecEncKey_base'] = create_hash(email_address+plaintext_password);

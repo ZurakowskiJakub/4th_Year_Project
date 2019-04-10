@@ -86,6 +86,7 @@
                 {% if key == 'ppsn' %}<h3>Public Services Card Number: {{printDecrypted(value)}}</h3>{% endif %}
                 {% if key == 'bloodType' %}<p><b>Blood Type:</b> {{printDecrypted(value)}}</p>{% endif %}
                 {% if key == 'height' %}<p><b>Height (cm):</b> {{printDecrypted(value)}}</p>{% endif %}
+                <p>Email Address: {{session['auth']}}</p>
                 {% if key == 'mobile' %}<p><b>Mobile Number:</b> {{printDecrypted(value)}}</p>{% endif %}
                 {% if key == 'landline' %} <p><b>Landline Number:</b> {{printDecrypted(value)}}</p> {% endif %}
                 {% if key == 'address1' %} <p><b>Address 1:</b> {{printDecrypted(value)}}</p> {% endif %}
@@ -96,6 +97,10 @@
                 {% if key == 'postcode' %}<p><b>Eircode / Postcode:</b> {{printDecrypted(value)}}</p>{% endif %}
                 {% if key == 'country' %}<p><b>Country:</b> {{printDecrypted(value)}}</p>{% endif %}
             {% endfor %}
+        </div>
+    {% else %}
+    <div class="print-only">
+            <p>Email Address: {{session['auth']}}</p>
         </div>
     {% endif %}
     
@@ -257,7 +262,7 @@
                         <b>Date:</b> {{printDecrypted(history_item['date'])}}
                     </div>
                     <div class="card-header bg-secondary">
-                        <b>Date:</b> {{printDecrypted(history_item['visit_type'])}}
+                        <b>Type of Visit:</b> {{printDecrypted(history_item['visit_type'])}}
                     </div>
                     {% if history_item['desc'] %}
                     <div class="card-body">

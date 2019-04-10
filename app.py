@@ -287,7 +287,8 @@ def medicalHistory():
                                    lim=res_lim,
                                    token=token)
         else:
-            return render_template('medicalHistory.html')
+            return render_template('medicalHistory.html',
+                                   token=token)
     else:
         abort(401)
 

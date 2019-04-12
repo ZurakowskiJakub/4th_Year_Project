@@ -293,40 +293,12 @@ def medicalHistory():
         abort(401)
 
 
-@app.route('/addMedicalHistory', methods=['GET', 'POST'])
+@app.route('/addMedicalHistory', methods=['GET'])
 def addMedicalHistory():
     if checkUserAuth():
         if request.method == 'GET':
             return render_template('addMedicalHistory.html')
 
-        elif request.method == 'POST':
-            history = {}
-            if request.form['event_name_encrypted']:
-                history['event_name'] = request.form['event_name_encrypted']
-            if request.form['event_description_encrypted']:
-                history['event_description'] = request.form['event_description_encrypted']
-            if request.form['severity_encrypted']:
-                history['severity'] = request.form['severity_encrypted']
-            if request.form['date_encrypted']:
-                history['date'] = request.form['date_encrypted']
-
-            try:
-                mongo.db.Users.update(
-                    {"email": session['auth']},
-                    {"$push": {
-                        "history": history
-                    }},
-                )
-            except IOError:
-                flash("There was an issue adding your item. Please try again.",
-                      category="error")
-                return redirect(url_for('addMedicalHistory'), 500)
-
-            flash("Item added sucesfully.", category="info")
-            return render_template('addMedicalHistory.html')
-
-        else:
-            abort(500)
     else:
         abort(401)
 
@@ -481,7 +453,7 @@ def updateUserAccount(email_address: str, query: dict)->bool:
     """Updates user account by email address. \n
     @param email_address target email/account. \n
     @param query a dictionary with mongo query of items to update. \n
-    @return boolean OR render_template()
+    @return boolean
     """
     try:
         mongo.db.Users.update({"email": email_address}, query)

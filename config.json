@@ -1,8 +1,8 @@
 {
-    "SECRET_KEY": "st7x87F+9_!XyYmjr$zm8k9YdrpFDLf*XZYrDy@YDaaF5pvk6W+!s8LF%v=BXdZw",
-    "SECURITY_PASSWORD_SALT": "eU,z[#).q@_Qu@`blA7@HdOk#$;<D$Uv;q?*e/Q`Gd{')yrN`Ld9!g%'MJda]L/1",
-    "MONGO_URI": "mongodb://localhost:27017/MediSec",
-    "EXTERNAL_HOST": "109.76.24.96:8002",
-    "EMAIL_USERNAME": "Jakub_zzzz@hotmail.com",
-    "EMAIL_PASSWORD": "jakeisgreat101"
+    "SECRET_KEY": "",
+    "SECURITY_PASSWORD_SALT": "",
+    "MONGO_URI": "",
+    "EXTERNAL_HOST": "",
+    "EMAIL_USERNAME": "",
+    "EMAIL_PASSWORD": ""
 }

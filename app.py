@@ -211,6 +211,9 @@ def login():
 
 @app.route('/validateEmail/<user_token>', methods=['GET'])
 def validateEmail(user_token):
+    """GET: takes in the user token and validates it.
+    :param: user_token the user token
+    """
     # IF LOGGED IN, REDIRECT TO HOME
     if checkUserAuth():
         return redirect(url_for('medicalHistory'))
@@ -255,6 +258,11 @@ def resendValidationEmail():
 
 @app.route('/medicalHistory', methods=['GET'])
 def medicalHistory():
+    """GET: Returns the medical history page.\n
+    May or may not contain history records.\n
+    Takes in a number of filters such as:\n
+    Sory by date, sort by category, limit results.
+    """
     if checkUserAuth():
         mongo = getUserAccount(session['auth'])
         token = mongo.get('token')
@@ -295,6 +303,8 @@ def medicalHistory():
 
 @app.route('/addMedicalHistory', methods=['GET'])
 def addMedicalHistory():
+    """GET: Returns the page listing categories of medical history to add.
+    """
     if checkUserAuth():
         if request.method == 'GET':
             return render_template('addMedicalHistory.html')
@@ -305,6 +315,9 @@ def addMedicalHistory():
 
 @app.route('/addMedicalHistory/<historyType>', methods=['GET', 'POST'])
 def addMedicalHistoryForm(historyType):
+    """GET: Returns the page for a category of medical history and it's relevant form.\n
+    POST: Loops through form arguments and persists them in the database.
+    """
     history_types = [
         'DoctorVisit',
         'HospitalVisit',
@@ -369,6 +382,9 @@ def removeMedicalHistoryItem(item_id):
 
 @app.route('/account', methods=['GET', 'POST'])
 def account():
+    """GET: Display the account page listing all fields filled in.\n
+    POST: Persist all filled in fields from the form.
+    """
     if checkUserAuth():
         if request.method == 'POST':
             document = {"account": {}}
@@ -409,6 +425,9 @@ def logout():
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
+    """GET: Returns the contact page.\n
+    POST: Sends an email with the query to the devs.
+    """
     if request.method == 'GET':
         return render_template('contact.html')
 
